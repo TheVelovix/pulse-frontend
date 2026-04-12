@@ -1,0 +1,192 @@
+"use client";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAnalytics } from "@/hooks/useAnalytics";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
+const DATE_RANGES = [
+  { label: "7d", value: 7 },
+  { label: "30d", value: 30 },
+  { label: "All time", value: undefined },
+];
+
+export default function ProjectPage() {
+  const { id } = useParams<{ id: string }>();
+  const [days, setDays] = useState<number | undefined>(30);
+  const { analytics, loading } = useAnalytics(id, days);
+  const [project, setProject] = useState<Project | null>(null);
+  useEffect(() => {
+    fetch(`/api/projects`, { credentials: "include" })
+      .then(res => res.json())
+      .then((data: Project[]) => {
+        const found = data.find(p => p.id === id);
+        setProject(found ?? null);
+      });
+  }, [id]);
+  if (loading)
+    return <p className="text-text-muted text-sm p-10">Loading...</p>;
+  if (!analytics)
+    return (
+      <p className="text-text-muted text-sm p-10">Failed to load analytics.</p>
+    );
+
+  return (
+    <div className="mx-auto max-w-7xl w-full px-6 py-10 flex flex-col gap-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
+        <div className="flex gap-2">
+          {DATE_RANGES.map(range => (
+            <button
+              key={range.label}
+              onClick={() => setDays(range.value)}
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors duration-200 ${
+                days === range.value
+                  ? "bg-accent text-white"
+                  : "bg-card border border-white/10 text-text-muted hover:text-foreground"
+              }`}
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Total Views */}
+      <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
+        <p className="text-text-muted text-sm mb-1">Total Views</p>
+        <p className="text-3xl font-bold">
+          {analytics.totalViews.toLocaleString()}
+        </p>
+      </div>
+
+      {/* Views per day chart */}
+      <div className="bg-card border border-white/10 rounded-lg p-6">
+        <h2 className="text-sm font-medium text-text-muted mb-4">
+          Views per day
+        </h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={analytics.viewsPerDay}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(255,255,255,0.05)"
+            />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "#6b7280", fontSize: 12 }}
+              tickFormatter={val =>
+                new Date(val).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              }
+            />
+            <YAxis tick={{ fill: "#6b7280", fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                background: "#111111",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "8px",
+              }}
+              labelFormatter={val =>
+                new Date(val).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              }
+            />
+            <Line
+              type="monotone"
+              dataKey="count"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Lists grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <StatList
+          title="Top Pages"
+          items={analytics.topPages.map(p => ({
+            label: p.url,
+            count: p.count,
+          }))}
+        />
+        <StatList
+          title="Top Referrers"
+          items={analytics.topReferrers.map(r => ({
+            label: r.referrer ?? "Direct",
+            count: r.count,
+          }))}
+        />
+        <StatList
+          title="Devices"
+          items={analytics.devices.map(d => ({
+            label: d.device ?? "Unknown",
+            count: d.count,
+          }))}
+        />
+        <StatList
+          title="Browsers"
+          items={analytics.browsers.map(b => ({
+            label: b.browser ?? "Unknown",
+            count: b.count,
+          }))}
+        />
+        <StatList
+          title="Countries"
+          items={analytics.countries.map(c => ({
+            label: c.country ?? "Unknown",
+            count: c.count,
+          }))}
+        />
+      </div>
+    </div>
+  );
+}
+
+function StatList({
+  title,
+  items,
+}: {
+  title: string;
+  items: { label: string; count: number }[];
+}) {
+  const total = items.reduce((sum, item) => sum + item.count, 0);
+  return (
+    <div className="bg-card border border-white/10 rounded-lg p-5">
+      <h2 className="text-sm font-medium text-text-muted mb-4">{title}</h2>
+      {items.length === 0 ? (
+        <p className="text-text-muted text-xs">No data</p>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {items.map((item, i) => (
+            <li key={i} className="flex items-center justify-between text-sm">
+              <div className="relative flex-1 mr-4">
+                <div
+                  className="absolute inset-y-0 left-0 bg-accent/10 rounded"
+                  style={{ width: `${(item.count / total) * 100}%` }}
+                />
+                <span className="relative px-2 py-0.5 truncate block">
+                  {item.label}
+                </span>
+              </div>
+              <span className="text-text-muted shrink-0">{item.count}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
