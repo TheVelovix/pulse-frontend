@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/context/SessionContext";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

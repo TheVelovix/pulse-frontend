@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import {
   LineChart,
@@ -23,6 +23,7 @@ export default function ProjectPage() {
   const [days, setDays] = useState<number | undefined>(30);
   const { analytics, loading } = useAnalytics(id, days);
   const [project, setProject] = useState<Project | null>(null);
+  const [showScriptModal, setShowScriptModal] = useState(false);
   useEffect(() => {
     fetch(`/api/projects`, { credentials: "include" })
       .then(res => res.json())
@@ -59,7 +60,17 @@ export default function ProjectPage() {
           ))}
         </div>
       </div>
-
+      <button
+        onClick={() => setShowScriptModal(true)}
+        className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
+      >
+        <p>Copy Script</p>
+      </button>
+      <ScriptModal
+        projectId={id}
+        open={showScriptModal}
+        onClose={() => setShowScriptModal(false)}
+      />
       {/* Total Views */}
       <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
         <p className="text-text-muted text-sm mb-1">Total Views</p>
@@ -151,6 +162,81 @@ export default function ProjectPage() {
             count: c.count,
           }))}
         />
+      </div>
+    </div>
+  );
+}
+
+function ScriptModal({
+  projectId,
+  open,
+  onClose,
+}: {
+  projectId: string;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const scriptTag = `<script src="https://api.pulse.velovix.com/viewsTracker.js" data-project-id="${projectId}"></script>`;
+
+  function handleCopy() {
+    navigator.clipboard.writeText(scriptTag).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function handleOverlayClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (e.target === overlayRef.current) onClose();
+  }
+
+  return (
+    <div
+      ref={overlayRef}
+      onClick={handleOverlayClick}
+      className={`fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+        open
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
+      }`}
+    >
+      <div
+        className={`bg-card border border-white/10 rounded-xl p-6 w-full max-w-lg shadow-xl transition-all duration-300 ${
+          open
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-4"
+        }`}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-semibold">Install Script</h2>
+          <button
+            onClick={onClose}
+            className="text-text-muted hover:text-foreground transition-colors duration-150 text-xl leading-none cursor-pointer"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        <p className="text-text-muted text-sm mb-4">
+          Paste this script tag inside the{" "}
+          <code className="text-accent">&lt;head&gt;</code> of your site.
+        </p>
+        <div className="relative bg-background border border-white/10 rounded-lg p-4 overflow-x-auto">
+          <pre className="text-sm text-foreground whitespace-pre-wrap break-all pr-2">
+            {scriptTag}
+          </pre>
+        </div>
+        <button
+          onClick={handleCopy}
+          className={`mt-4 w-full py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+            copied
+              ? "bg-green-600/20 border border-green-500/40 text-green-400"
+              : "bg-accent hover:opacity-80 text-white"
+          }`}
+        >
+          {copied ? "Copied!" : "Copy to clipboard"}
+        </button>
       </div>
     </div>
   );

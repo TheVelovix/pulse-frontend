@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
+import SessionProvider from "@/context/SessionContext";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -23,19 +24,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <main className="flex flex-col flex-1">{children}</main>
-        <Toaster
-          theme="dark"
-          toastOptions={{
-            style: {
-              background: "#111111",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#f9fafb",
-            },
-          }}
-        />
-        <Footer />
+        <SessionProvider>
+          <Navbar />
+          <main className="flex flex-col flex-1">{children}</main>
+          <Toaster
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: "#111111",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#f9fafb",
+              },
+            }}
+          />
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useSession } from "@/hooks/useSession";
-import { useRouter } from "next/navigation";
+import { useSession } from "@/context/SessionContext";
 import logo from "@/images/pulse-logo.png";
 
 export default function Navbar() {

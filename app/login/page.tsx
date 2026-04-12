@@ -1,7 +1,6 @@
 "use client";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/context/SessionContext";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -19,28 +18,19 @@ export default function Login() {
     password: "",
   });
   const [error, setError] = useState("");
-  async function login(e: React.SubmitEvent) {
-    e.preventDefault();
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-    console.log(res);
-    if (!res.ok) {
-      setError("Unknown error occurred.");
-    } else {
-      toast("Login successful!");
-      setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
-    }
-  }
+
   return (
     <form
-      onSubmit={(e) => login(e)}
+      onSubmit={e => {
+        try {
+          session.login(e, credentials);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            if (err.message === "invalid-credentials")
+              setError("Invalid credentials");
+          }
+        }
+      }}
       className="bg-card w-[90%] mx-auto border border-white my-auto p-4 rounded-lg sm:w-3/4 md:w-2/4 lg:w-2/5 2xl:w-1/4"
     >
       <h2 className="font-semibold text-center text-lg mb-4">
@@ -55,7 +45,7 @@ export default function Login() {
           type="email"
           placeholder="user@example.com"
           value={credentials.email}
-          onChange={(e) => {
+          onChange={e => {
             setError("");
             setCredentials({ ...credentials, email: e.target.value });
           }}
@@ -70,7 +60,7 @@ export default function Login() {
         <input
           type="password"
           value={credentials.password}
-          onChange={(e) => {
+          onChange={e => {
             setError("");
             setCredentials({ ...credentials, password: e.target.value });
           }}
