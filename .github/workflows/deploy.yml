@@ -32,8 +32,10 @@ jobs:
       - name: Build and restart
         run: |
           ssh -i ~/.ssh/id_ed25519 root@${{ secrets.VPS_HOST }} "
-            cd /var/www/pulse-frontend &&
-            bun install &&
-            bun run build &&
+          cd /var/www/pulse-frontend &&
+          /root/.bun/bin/bun install &&
+          /root/.bun/bin/bun run build &&
+          systemctl restart pulse-frontend
+          "
             systemctl restart pulse-frontend
           "
