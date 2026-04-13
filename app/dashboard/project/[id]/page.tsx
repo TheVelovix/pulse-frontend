@@ -251,7 +251,7 @@ function StatList({
 }) {
   const total = items.reduce((sum, item) => sum + item.count, 0);
   return (
-    <div className="bg-card border border-white/10 rounded-lg p-5">
+    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-scroll">
       <h2 className="text-sm font-medium text-text-muted mb-4">{title}</h2>
       {items.length === 0 ? (
         <p className="text-text-muted text-xs">No data</p>
