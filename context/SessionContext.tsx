@@ -2,7 +2,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface User {
   id: string;
@@ -32,9 +31,21 @@ export default function SessionProvider({
 
   async function fetchSession() {
     try {
-      const res = await fetchWithAuth("/api/auth/me", {
-        credentials: "include",
-      });
+      let res = await fetch("/api/auth/me", { credentials: "include" });
+
+      if (res.status === 401) {
+        const refreshRes = await fetch("/api/refresh", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (refreshRes.ok) {
+          res = await fetch("/api/auth/me", { credentials: "include" });
+        } else {
+          setUser(null);
+          return;
+        }
+      }
+
       if (res.ok) {
         const data = await res.json();
         setUser(data);
