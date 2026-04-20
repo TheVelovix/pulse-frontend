@@ -20,6 +20,7 @@ jobs:
         run: |
           echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" > .env.local
           echo "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}" >> .env.local
+          echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}" >> .env.local
 
       - name: Copy files
         run: |
