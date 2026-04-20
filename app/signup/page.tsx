@@ -1,13 +1,21 @@
 "use client";
 import { useSession } from "@/context/SessionContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { getPaddleInstance } from "@paddle/paddle-js";
 
-export default function Login() {
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();

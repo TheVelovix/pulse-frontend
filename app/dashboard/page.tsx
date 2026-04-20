@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/Card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -24,22 +24,11 @@ async function getProjects(controller: AbortController): Promise<Project[]> {
     return [];
   }
 }
-export default function Dashboard() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [formVisible, setFormVisible] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [error, setError] = useState("");
-  const { refetch, user } = useSession();
+
+function JustSubscribed() {
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  useEffect(() => {
-    const controller = new AbortController();
-    getProjects(controller).then(projects => setProjects(projects));
-    if (!user) router.replace("/");
-    return () => controller.abort();
-  }, []);
+  const { refetch } = useSession();
 
   useEffect(() => {
     if (searchParams.get("justSubscribed") === "true") {
@@ -48,6 +37,25 @@ export default function Dashboard() {
         router.replace("/dashboard");
       });
     }
+  }, []);
+
+  return null;
+}
+
+export default function Dashboard() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [error, setError] = useState("");
+  const { user } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    getProjects(controller).then(projects => setProjects(projects));
+    if (!user) router.replace("/");
+    return () => controller.abort();
   }, []);
 
   function openForm() {
@@ -94,6 +102,9 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-7xl w-full px-6 py-10">
+      <Suspense>
+        <JustSubscribed />
+      </Suspense>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         {user?.subscriptionPlan === SubscriptionPlan.FREE && (
