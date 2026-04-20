@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { getPaddleInstance } from "@paddle/paddle-js";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function SignupPage() {
   return (
@@ -19,6 +20,7 @@ function SignupForm() {
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [turnstileToken, setTurnstileToken] = useState("");
   const isPro = searchParams.get("plan") === "pro";
 
   useEffect(() => {
@@ -38,7 +40,7 @@ function SignupForm() {
     refund: false,
   });
   const [error, setError] = useState("");
-  async function login(e: React.SubmitEvent) {
+  async function signup(e: React.SubmitEvent) {
     e.preventDefault();
     if (credentials.password !== credentials.confirmPassword) {
       setError("Passwords do not match.");
@@ -47,7 +49,7 @@ function SignupForm() {
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ ...credentials, turnstileToken }),
     });
     if (!res.ok) {
       const contentType = res.headers.get("Content-Type") ?? "";
@@ -59,6 +61,9 @@ function SignupForm() {
             break;
           case "user-already-exists":
             setError("Email already in use.");
+            break;
+          case "captcha-failed":
+            setError("CAPTCHA verification failed. Please try again.");
             break;
           default:
             setError("Unknown error occurred.");
@@ -102,7 +107,7 @@ function SignupForm() {
   }
   return (
     <form
-      onSubmit={e => login(e)}
+      onSubmit={e => signup(e)}
       className="bg-card w-[90%] mx-auto border border-white my-auto p-4 rounded-lg sm:w-3/4 md:w-2/4 lg:w-2/5 2xl:w-1/4"
     >
       <h2 className="font-semibold text-center text-lg mb-4">
@@ -218,6 +223,13 @@ function SignupForm() {
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
+      <div className="mt-6 mb-2 w-fit mx-auto">
+        <Turnstile
+          className="mx-auto"
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onSuccess={setTurnstileToken}
+        />
+      </div>
       <button
         type="submit"
         className="bg-accent w-full py-2 mt-4 rounded-md transition-colors duration-200 hover:bg-accent-hover cursor-pointer"

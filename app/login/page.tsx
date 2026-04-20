@@ -2,11 +2,12 @@
 import { useSession } from "@/context/SessionContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function Login() {
   const session = useSession();
   const router = useRouter();
-
+  const [turnstileToken, setTurnstileToken] = useState("");
   useEffect(() => {
     if (!session.loading && session.user) {
       router.replace("/dashboard");
@@ -21,13 +22,15 @@ export default function Login() {
 
   return (
     <form
-      onSubmit={e => {
+      onSubmit={async e => {
         try {
-          session.login(e, credentials);
+          await session.login(e, { ...credentials, turnstileToken });
         } catch (err: unknown) {
           if (err instanceof Error) {
             if (err.message === "invalid-credentials")
-              setError("Invalid credentials");
+              setError("Invalid email or password.");
+            else if (err.message === "captcha-failed")
+              setError("CAPTCHA verification failed. Please try again.");
           }
         }
       }}
@@ -71,6 +74,13 @@ export default function Login() {
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
+      <div className="mt-6 mb-2 w-fit mx-auto">
+        <Turnstile
+          className="mx-auto"
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onSuccess={setTurnstileToken}
+        />
+      </div>
       <button
         type="submit"
         className="bg-accent w-full py-2 mt-4 rounded-md transition-colors duration-200 hover:bg-accent-hover cursor-pointer"

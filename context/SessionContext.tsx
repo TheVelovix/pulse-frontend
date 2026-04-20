@@ -19,7 +19,7 @@ interface SessionContextType {
   loading: boolean;
   login: (
     e: React.SubmitEvent,
-    credentials: { email: string; password: string },
+    credentials: { email: string; password: string; turnstileToken: string },
   ) => Promise<void>;
   logout: () => Promise<void>;
   refetch: () => Promise<void>;
@@ -72,7 +72,7 @@ export default function SessionProvider({
 
   async function login(
     e: React.SubmitEvent,
-    credentials: { email: string; password: string },
+    credentials: { email: string; password: string; turnstileToken: string },
   ) {
     e.preventDefault();
     const res = await fetch("/api/auth/login", {
@@ -84,7 +84,8 @@ export default function SessionProvider({
       const contentType = res.headers.get("content-type");
       if (contentType?.includes("text/plain")) {
         const message = await res.text();
-        if (message === "invalid-credentials") throw new Error(message);
+        if (message === "invalid-credentials" || message === "captcha-failed")
+          throw new Error(message);
       } else {
         toast.error("Unknown error occurred.");
       }
