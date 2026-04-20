@@ -10,7 +10,7 @@ export default function Navbar() {
   return (
     <nav className="border-b border-white/10 bg-card px-6 py-4">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
-        <Link href="/dashboard">
+        <Link href={user ? `/dashboard` : `/`}>
           <Image src={logo} alt="Pulse" height={30} priority />
         </Link>
         <div className="flex items-center gap-4">
@@ -19,10 +19,22 @@ export default function Navbar() {
               {user ? (
                 <>
                   <Link
+                    href="/pricing"
+                    className="text-sm font-medium text-text-muted hover:text-foreground transition-colors duration-200"
+                  >
+                    Pricing
+                  </Link>
+                  <Link
                     href="/dashboard"
                     className="text-sm font-medium text-accent hover:text-accent-hover transition-colors duration-200"
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard/account"
+                    className="text-sm font-medium text-text-muted hover:text-foreground transition-colors duration-200"
+                  >
+                    Account
                   </Link>
                   <button
                     onClick={logout}
@@ -33,6 +45,12 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
+                  <Link
+                    href="/pricing"
+                    className="text-sm font-medium text-text-muted hover:text-foreground transition-colors duration-200"
+                  >
+                    Pricing
+                  </Link>
                   <Link
                     href="/login"
                     className="text-sm font-medium text-text-muted hover:text-foreground transition-colors duration-200"

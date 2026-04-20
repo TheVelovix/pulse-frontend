@@ -3,9 +3,15 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+export enum SubscriptionPlan {
+  FREE = "free",
+  PRO = "pro",
+}
+
 interface User {
   id: string;
   email: string;
+  subscriptionPlan: SubscriptionPlan;
 }
 
 interface SessionContextType {
@@ -16,6 +22,7 @@ interface SessionContextType {
     credentials: { email: string; password: string },
   ) => Promise<void>;
   logout: () => Promise<void>;
+  refetch: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType | null>(null);
@@ -98,7 +105,9 @@ export default function SessionProvider({
   }
 
   return (
-    <SessionContext.Provider value={{ user, loading, login, logout }}>
+    <SessionContext.Provider
+      value={{ user, loading, login, logout, refetch: fetchSession }}
+    >
       {children}
     </SessionContext.Provider>
   );

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
 import SessionProvider from "@/context/SessionContext";
+import PaddleProvider from "@/context/PaddleProvider";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <SessionProvider>
+          <PaddleProvider />
           <Navbar />
           <main className="flex flex-col flex-1">{children}</main>
           <Toaster

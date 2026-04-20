@@ -1,12 +1,17 @@
 "use client";
 import { useSession } from "@/context/SessionContext";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import { getPaddleInstance } from "@paddle/paddle-js";
 
 export default function Login() {
   const session = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isPro = searchParams.get("plan") === "pro";
 
   useEffect(() => {
     if (!session.loading && session.user) {
@@ -18,6 +23,11 @@ export default function Login() {
     email: "",
     password: "",
     confirmPassword: "",
+  });
+  const [agreed, setAgreed] = useState({
+    terms: false,
+    privacy: false,
+    refund: false,
   });
   const [error, setError] = useState("");
   async function login(e: React.SubmitEvent) {
@@ -32,8 +42,8 @@ export default function Login() {
       body: JSON.stringify(credentials),
     });
     if (!res.ok) {
-      const contentType = res.headers.get("Content-Type");
-      if (contentType && contentType.includes("text/plain")) {
+      const contentType = res.headers.get("Content-Type") ?? "";
+      if (contentType.includes("text/plain")) {
         const responseText = await res.text();
         switch (responseText) {
           case "invalid-email":
@@ -45,12 +55,41 @@ export default function Login() {
           default:
             setError("Unknown error occurred.");
         }
-      } else setError("Unknown error occurred.");
+      } else if (contentType.includes("application/problem+json")) {
+        const problem = await res.json();
+        const messages: string[] = problem.errors
+          ? Object.values(problem.errors as Record<string, string[]>).flat()
+          : [];
+        setError(messages[0] ?? problem.title ?? "Unknown error occurred.");
+      } else {
+        setError("Unknown error occurred.");
+      }
     } else {
-      toast("Login successful!");
-      setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
+      toast("Account created successfully!");
+      await session.refetch();
+      if (isPro) {
+        const checkoutRes = await fetchWithAuth(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/checkout/subscribe`,
+          { method: "POST" },
+        );
+        if (!checkoutRes.ok) {
+          toast.error("Failed to start checkout.");
+          router.replace("/dashboard");
+          return;
+        }
+        const data = await checkoutRes.json();
+        const txnId = new URL(data.url).searchParams.get("_ptxn");
+        getPaddleInstance()?.Checkout.open({
+          transactionId: txnId!,
+          settings: {
+            successUrl: `${window.location.origin}/dashboard?justSubscribed=true`,
+          },
+        });
+      } else {
+        setTimeout(() => {
+          router.replace("/dashboard");
+        }, 1000);
+      }
     }
   }
   return (
@@ -108,6 +147,65 @@ export default function Login() {
           className="w-full border border-white rounded-lg p-2 text-sm transition-colors duration-200 focus:outline-none focus:border-accent"
           required
         />
+      </div>
+      <div className="flex flex-col gap-3 mt-5">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreed.terms}
+            onChange={e => setAgreed({ ...agreed, terms: e.target.checked })}
+            className="mt-0.5 accent-accent cursor-pointer"
+            required
+          />
+          <span className="text-sm text-text-muted leading-snug">
+            I agree to the{" "}
+            <Link
+              href="/legal/terms"
+              target="_blank"
+              className="text-accent hover:text-accent-hover transition-colors duration-200"
+            >
+              Terms of Service
+            </Link>
+          </span>
+        </label>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreed.privacy}
+            onChange={e => setAgreed({ ...agreed, privacy: e.target.checked })}
+            className="mt-0.5 accent-accent cursor-pointer"
+            required
+          />
+          <span className="text-sm text-text-muted leading-snug">
+            I agree to the{" "}
+            <Link
+              href="/legal/privacy"
+              target="_blank"
+              className="text-accent hover:text-accent-hover transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+          </span>
+        </label>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreed.refund}
+            onChange={e => setAgreed({ ...agreed, refund: e.target.checked })}
+            className="mt-0.5 accent-accent cursor-pointer"
+            required
+          />
+          <span className="text-sm text-text-muted leading-snug">
+            I have read the{" "}
+            <Link
+              href="/legal/refund"
+              target="_blank"
+              className="text-accent hover:text-accent-hover transition-colors duration-200"
+            >
+              Refund Policy
+            </Link>
+          </span>
+        </label>
       </div>
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>

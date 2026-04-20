@@ -3,19 +3,26 @@ import { Card } from "@/components/Card";
 import { useEffect, useState } from "react";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
+import { useSearchParams, useRouter } from "next/navigation";
+import { SubscriptionPlan, useSession } from "@/context/SessionContext";
 
 const emptyForm = { name: "", domain: "" };
 const ANIM_DURATION = 200;
 async function getProjects(controller: AbortController): Promise<Project[]> {
-  const response = await fetchWithAuth("/api/projects", {
-    signal: controller.signal,
-  });
-  if (!response.ok) {
+  try {
+    const response = await fetchWithAuth("/api/projects", {
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      toast.error("Failed to fetch projects.");
+      return [];
+    }
+    return response.json();
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return [];
     toast.error("Failed to fetch projects.");
     return [];
   }
-  const data = await response.json();
-  return data;
 }
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -23,11 +30,24 @@ export default function Dashboard() {
   const [formVisible, setFormVisible] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
+  const { refetch, user } = useSession();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const controller = new AbortController();
     getProjects(controller).then(projects => setProjects(projects));
+    if (!user) router.replace("/");
     return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (searchParams.get("justSubscribed") === "true") {
+      refetch().then(() => {
+        toast.success("You're now on the Pro plan!");
+        router.replace("/dashboard");
+      });
+    }
   }, []);
 
   function openForm() {
@@ -61,7 +81,6 @@ export default function Dashboard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    console.log(res);
     if (!res.ok) {
       toast.error("Failed to create project.");
       return;
@@ -77,6 +96,9 @@ export default function Dashboard() {
     <div className="mx-auto max-w-7xl w-full px-6 py-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
+        {user?.subscriptionPlan === SubscriptionPlan.FREE && (
+          <p>{projects.length}/5 projects</p>
+        )}
         {projects.length < 5 && (
           <button
             onClick={openForm}
