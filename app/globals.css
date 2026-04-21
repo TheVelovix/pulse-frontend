@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-day-picker/style.css";
 
 :root {
     --background: #0a0a0a;
@@ -23,4 +24,72 @@ body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-poppins), sans-serif;
+}
+
+.rdp-root {
+    --rdp-accent-color: #3b82f6;
+    --rdp-accent-background-color: rgba(59, 130, 246, 0.15);
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    color: #f9fafb;
+}
+
+.rdp-month_caption {
+    color: #f9fafb;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.rdp-weekday {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.rdp-day_button {
+    color: #f9fafb;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+}
+
+.rdp-day_button:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.rdp-selected .rdp-day_button {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.rdp-range_start .rdp-day_button,
+.rdp-range_end .rdp-day_button {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 6px;
+}
+
+.rdp-range_middle .rdp-day_button {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-radius: 0;
+    color: #f9fafb;
+}
+
+.rdp-nav button {
+    color: #f9fafb;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.rdp-nav button:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.rdp-outside .rdp-day_button {
+    color: #6b7280;
+}
+
+.rdp-disabled .rdp-day_button {
+    color: #6b7280;
+    opacity: 0.3;
 }

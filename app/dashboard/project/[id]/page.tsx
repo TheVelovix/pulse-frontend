@@ -11,6 +11,10 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { SubscriptionPlan, useSession } from "@/context/SessionContext";
+import DateRangePicker from "@/components/DateRangePicker";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import { toast } from "sonner";
 
 const DATE_RANGES = [
   { label: "7d", value: 7 },
@@ -21,9 +25,13 @@ const DATE_RANGES = [
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const [days, setDays] = useState<number | undefined>(30);
-  const { analytics, loading } = useAnalytics(id, days);
+  const [customFrom, setCustomFrom] = useState<string>("");
+  const [customTo, setCustomTo] = useState<string>("");
+  const { analytics, loading } = useAnalytics(id, days, customFrom, customTo);
   const [project, setProject] = useState<Project | null>(null);
   const [showScriptModal, setShowScriptModal] = useState(false);
+  const session = useSession();
+
   useEffect(() => {
     fetch(`/api/projects`, { credentials: "include" })
       .then(res => res.json())
@@ -32,6 +40,34 @@ export default function ProjectPage() {
         setProject(found ?? null);
       });
   }, [id]);
+
+  async function exportCsv() {
+    const params = new URLSearchParams();
+    if (customFrom && customTo) {
+      params.set("from", customFrom);
+      params.set("to", customTo);
+    } else if (days) {
+      params.set("days", days.toString());
+    }
+
+    const query = params.size > 0 ? `${params.toString()}` : "";
+    const res = await fetchWithAuth(`/api/projects/${id}/export${query}`, {
+      credentials: "include",
+    });
+    if (!res.ok) {
+      toast.error("Export failed");
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.href = url;
+    a.download = `${project?.name ?? "analytics"}-export.csv`;
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
   if (loading)
     return <p className="text-text-muted text-sm p-10">Loading...</p>;
   if (!analytics)
@@ -45,27 +81,64 @@ export default function ProjectPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
         <div className="flex gap-2">
-          {DATE_RANGES.map(range => (
-            <button
-              key={range.label}
-              onClick={() => setDays(range.value)}
-              className={`text-sm px-3 py-1.5 rounded-md transition-colors duration-200 ${
-                days === range.value
-                  ? "bg-accent text-white"
-                  : "bg-card border border-white/10 text-text-muted hover:text-foreground"
-              }`}
-            >
-              {range.label}
-            </button>
-          ))}
+          {DATE_RANGES.map(range => {
+            if (
+              range.label === "All time" &&
+              session.user?.subscriptionPlan !== SubscriptionPlan.PRO
+            )
+              return null;
+            return (
+              <button
+                key={range.label}
+                onClick={() => {
+                  setDays(range.value);
+                  setCustomFrom("");
+                  setCustomTo("");
+                }}
+                className={`text-sm px-3 py-1.5 rounded-md transition-colors duration-200 cursor-pointer ${
+                  days === range.value && !customFrom
+                    ? "bg-accent text-white"
+                    : "bg-card border border-white/10 text-text-muted hover:text-foreground"
+                }`}
+              >
+                {range.label}
+              </button>
+            );
+          })}
+          {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
+            <DateRangePicker
+              key={customFrom + customTo}
+              from={customFrom}
+              to={customTo}
+              onChangeAction={(from, to) => {
+                setCustomFrom(from);
+                setCustomTo(to);
+                setDays(undefined);
+              }}
+              onClearAction={() => {
+                setCustomFrom("");
+                setCustomTo("");
+                setDays(30);
+              }}
+            />
+          )}
         </div>
       </div>
-      <button
-        onClick={() => setShowScriptModal(true)}
-        className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
-      >
-        <p>Copy Script</p>
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={() => setShowScriptModal(true)}
+          className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
+        >
+          <p>Copy Script</p>
+        </button>
+
+        <button
+          onClick={() => exportCsv()}
+          className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
+        >
+          <p>Export CSV</p>
+        </button>
+      </div>
       <ScriptModal
         projectId={id}
         open={showScriptModal}
