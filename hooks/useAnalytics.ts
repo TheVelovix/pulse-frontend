@@ -22,7 +22,7 @@ export function useAnalytics(
         params.set("days", days.toString());
       }
       const query = params.size > 0 ? `?${params.toString()}` : "";
-      const url = `/api/projects/${projectId}/analytics${query}`;
+      const url = `/api/analytics/${projectId}${query}`;
       const res = await fetchWithAuth(url, {
         signal: controller.signal,
         credentials: "include",

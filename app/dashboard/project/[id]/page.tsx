@@ -51,7 +51,7 @@ export default function ProjectPage() {
     }
 
     const query = params.size > 0 ? `${params.toString()}` : "";
-    const res = await fetchWithAuth(`/api/projects/${id}/export${query}`, {
+    const res = await fetchWithAuth(`/api/analytics/${id}/export${query}`, {
       credentials: "include",
     });
     if (!res.ok) {
@@ -71,7 +71,7 @@ export default function ProjectPage() {
   const [liveVisitors, setLiveVisitors] = useState<number>(0);
   useEffect(() => {
     const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${id}/live`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/analytics/${id}/live`,
       { withCredentials: true },
     );
 
@@ -149,12 +149,14 @@ export default function ProjectPage() {
           <p>Copy Script</p>
         </button>
 
-        <button
-          onClick={() => exportCsv()}
-          className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
-        >
-          <p>Export CSV</p>
-        </button>
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
+          <button
+            onClick={() => exportCsv()}
+            className="bg-card border border-white/10 rounded-lg py-4 w-40 cursor-pointer transition-all duration-200 hover:opacity-80"
+          >
+            <p>Export CSV</p>
+          </button>
+        )}
       </div>
       <ScriptModal
         projectId={id}
