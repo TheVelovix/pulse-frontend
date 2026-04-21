@@ -50,7 +50,7 @@ export default function ProjectPage() {
       params.set("days", days.toString());
     }
 
-    const query = params.size > 0 ? `${params.toString()}` : "";
+    const query = params.size > 0 ? `?${params.toString()}` : "";
     const res = await fetchWithAuth(`/api/analytics/${id}/export${query}`, {
       credentials: "include",
     });
