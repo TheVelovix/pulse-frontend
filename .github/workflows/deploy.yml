@@ -19,7 +19,7 @@ jobs:
       - name: Write env
         run: |
           echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" > .env.local
-          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }}" > .env.local
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env.local
           echo "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}" >> .env.local
           echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}" >> .env.local
 
