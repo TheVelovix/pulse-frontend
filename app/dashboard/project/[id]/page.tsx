@@ -68,6 +68,23 @@ export default function ProjectPage() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+  const [liveVisitors, setLiveVisitors] = useState<number>(0);
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${id}/live`,
+      { withCredentials: true },
+    );
+
+    eventSource.onmessage = e => {
+      setLiveVisitors(parseInt(e.data));
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, [id]);
   if (loading)
     return <p className="text-text-muted text-sm p-10">Loading...</p>;
   if (!analytics)
@@ -144,14 +161,20 @@ export default function ProjectPage() {
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
-      {/* Total Views */}
-      <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
-        <p className="text-text-muted text-sm mb-1">Total Views</p>
-        <p className="text-3xl font-bold">
-          {analytics.totalViews.toLocaleString()}
-        </p>
+      <div className="flex gap-3">
+        {/* Total Views */}
+        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
+          <p className="text-text-muted text-sm mb-1">Total Views</p>
+          <p className="text-3xl font-bold">
+            {analytics.totalViews.toLocaleString()}
+          </p>
+        </div>
+        {/*Live Views*/}
+        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
+          <p className="text-text-muted text-sm mb-1">Live Views</p>
+          <p className="text-3xl font-bold">{liveVisitors}</p>
+        </div>
       </div>
-
       {/* Views per day chart */}
       <div className="bg-card border border-white/10 rounded-lg p-6">
         <h2 className="text-sm font-medium text-text-muted mb-4">
