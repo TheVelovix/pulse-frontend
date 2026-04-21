@@ -7,7 +7,7 @@ export default function PaddleProvider() {
     initializePaddle({
       environment:
         process.env.NODE_ENV === "production" ? "production" : "sandbox",
-      token: process.env.NEXT_PUBLIC_PADDLE_TOKEN as string,
+      token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN as string,
     });
   }, []);
 
