@@ -20,6 +20,7 @@ const PRO_FEATURES = [
   "Weekly email reports",
   "Real-time visitor count",
   "Remove Pulse branding",
+  "Developer API access",
 ];
 
 export default function PricingPage() {
