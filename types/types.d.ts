@@ -1,3 +1,7 @@
+interface ApiKey {
+  name: string;
+  createdAt: string;
+}
 interface CardItem {
   id: string;
   name: string;
