@@ -7,7 +7,9 @@ export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-card px-6 py-6 mt-auto">
       <div className="mx-auto max-w-7xl flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-        <Image src={logo} alt="Pulse" height={28} />
+        <Link href="/">
+          <Image src={logo} alt="Pulse" height={28} />
+        </Link>
         <div className="flex flex-col items-center gap-2">
           <p className="text-xs text-text-muted">
             &copy; {new Date().getFullYear()} Pulse. All rights reserved.

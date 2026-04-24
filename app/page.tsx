@@ -56,8 +56,7 @@ const STEPS = [
   },
   {
     title: "Add the script tag",
-    description:
-      "Copy the generated snippet from your dashboard and paste it into the &lt;head&gt; of your site.",
+    description: `Copy the generated snippet from your dashboard and paste it into the <head> of your site.`,
   },
   {
     title: "Watch the data flow",
