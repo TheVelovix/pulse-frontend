@@ -193,7 +193,7 @@ function ResetPasswordForm({ onClose }: { onClose: () => void }) {
   }
 
   const subtitle = {
-    email: "Enter your email and we'll send you a 4-digit code.",
+    email: "Enter your email and we'll send you a 6-digit code.",
     code: `Enter the code sent to ${email} and choose a new password.`,
     done: "Your password has been reset successfully.",
   }[step];
@@ -266,12 +266,12 @@ function ResetPasswordForm({ onClose }: { onClose: () => void }) {
       {step === "code" && (
         <form onSubmit={handleCodeSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">4-digit code</label>
+            <label className="text-sm font-medium">6-digit code</label>
             <input
               type="text"
               inputMode="numeric"
-              maxLength={4}
-              placeholder="0000"
+              maxLength={6}
+              placeholder="000000"
               value={code}
               onChange={e => {
                 setError("");
@@ -311,7 +311,10 @@ function ResetPasswordForm({ onClose }: { onClose: () => void }) {
           <div className="flex gap-3 justify-end">
             <button
               type="button"
-              onClick={() => { setStep("email"); setError(""); }}
+              onClick={() => {
+                setStep("email");
+                setError("");
+              }}
               className="text-sm text-text-muted hover:text-foreground transition-colors duration-200 cursor-pointer px-4 py-2"
             >
               Back
