@@ -8,6 +8,20 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pulse — Privacy-Friendly Website Analytics",
+  description:
+    "Lightweight, privacy-first analytics for your website. No cookies, no fingerprinting. Add one script tag and get instant insights into visitors, pages, and referrers.",
+  openGraph: {
+    title: "Pulse — Privacy-Friendly Website Analytics",
+    description:
+      "Lightweight, privacy-first analytics for your website. No cookies, no fingerprinting. Add one script tag and get instant insights.",
+    url: "https://pulse.velovix.com",
+    siteName: "Pulse",
+  },
+};
 
 const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
   {
@@ -80,12 +94,12 @@ export default function Home() {
 
         <span className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-card px-4 py-1.5 text-xs font-medium text-text-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          Simple · Fast · Private
+          Simple · Lightweight · Privacy-first
         </span>
 
         <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          Analytics that don&apos;t{" "}
-          <span className="text-accent">get in the way</span>
+          Privacy-friendly website analytics,
+          <span className="text-accent"> without the complexity</span>
         </h1>
 
         <p className="relative mt-6 max-w-xl text-base text-text-muted md:text-lg">
