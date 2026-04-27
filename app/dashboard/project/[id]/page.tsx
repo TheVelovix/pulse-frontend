@@ -95,7 +95,7 @@ export default function ProjectPage() {
   return (
     <div className="mx-auto max-w-7xl w-full px-6 py-10 flex flex-col gap-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-col gap-6 md:flex-row md:gap-0">
         <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
         <div className="flex gap-2">
           {DATE_RANGES.map(range => {
