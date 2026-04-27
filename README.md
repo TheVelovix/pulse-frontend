@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pulse — Frontend
+
+> Privacy-friendly website analytics, without the complexity.
+
+The frontend for [Pulse](https://pulse.velovix.com) — a lightweight, open source analytics platform. One script tag, zero cookies, no personal data stored.
+
+![Pulse Dashboard](https://pulse.velovix.com/dashboard-screenshot.png)
+
+**[Live Demo](https://pulse.velovix.com) · [Backend Repo](https://github.com/TheVelovix/pulse-backend) · [Docs](https://pulse.velovix.com/docs)**
+
+---
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) (App Router)
+- TypeScript
+- Tailwind CSS
+- Bun
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Bun](https://bun.sh) installed
+- Backend running (see [pulse-backend](https://github.com/TheVelovix/pulse-backend))
+
+### Local Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/TheVelovix/pulse-frontend
+cd pulse-frontend
+bun install
+```
+
+Create a `.env` file:
+
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5119
+BACKEND_URL=http://localhost:5119
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_turnstile_site_key
+NEXT_PUBLIC_PADDLE_TOKEN=your_paddle_token  # Optional, only if using payments
+```
+
+Then run:
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+| Variable | Required | Description |
+|---|---|---|
+| `NEXT_PUBLIC_BACKEND_URL` | Yes | Public-facing backend URL |
+| `BACKEND_URL` | Yes | Internal backend URL (used by Next.js server) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Yes | Cloudflare Turnstile site key |
+| `NEXT_PUBLIC_PADDLE_TOKEN` | No | Paddle client token (only needed for payments) |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 📊 Page views, referrers, devices, countries
+- 🔴 Real-time visitor count
+- 📅 7d / 30d / all time / custom date ranges
+- 📤 CSV export
+- 📧 Weekly email reports
+- 🔑 Developer API access
+- 🏠 Self-hostable
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pull requests are welcome. For major changes, open an issue first.
