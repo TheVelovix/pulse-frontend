@@ -55,7 +55,7 @@ export default function PricingPage() {
               Free
             </p>
             <div className="flex items-end gap-1 mb-1">
-              <span className="text-4xl font-bold">$0</span>
+              <span className="text-4xl font-bold">€0</span>
             </div>
             <p className="text-sm text-text-muted mb-8">Free forever</p>
 
@@ -92,7 +92,7 @@ export default function PricingPage() {
             </div>
 
             <div className="flex items-end gap-1 mb-1">
-              <span className="text-4xl font-bold">$7</span>
+              <span className="text-4xl font-bold">€7</span>
               <span className="text-text-muted text-sm mb-1">/month</span>
             </div>
             <p className="text-sm text-text-muted mb-8">Billed monthly</p>
