@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Zap,
   BarChart2,
@@ -6,9 +7,12 @@ import {
   Globe,
   Layers,
   Wrench,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import { Metadata } from "next";
+import PricingButton from "@/components/PricingButton";
+import dashboard from "@/images/dashboard.png";
 
 export const metadata: Metadata = {
   title: "Pulse — Privacy-Friendly Website Analytics",
@@ -28,19 +32,19 @@ const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Zap,
     title: "Lightweight script",
     description:
-      "Under 1 KB. Pulse loads asynchronously so it never blocks your page or affects your Core Web Vitals.",
+      "1 KB. Pulse loads asynchronously so it never slows down your page or hurts your performance scores.",
   },
   {
     icon: BarChart2,
     title: "Up-to-date dashboard",
     description:
-      "View page views, referrers, devices, and countries whenever you need them — filter by 7 days, 30 days, or all time.",
+      "See page views, referrers, devices, and countries on an intuitive live dashboard from anywhere, anytime. Powerful filters let you see exactly the data you need.",
   },
   {
     icon: Shield,
     title: "Privacy-first",
     description:
-      "No cookies, no fingerprinting, no personal data stored. Only anonymous metadata like page URL, device type, browser and country.",
+      "No cookies, no fingerprinting, no personal data collected — ever. Stay compliant with GDPR and CCPA out of the box, with nothing to configure.",
   },
   {
     icon: Globe,
@@ -52,7 +56,7 @@ const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Layers,
     title: "Multi-site support",
     description:
-      "Manage up to five projects from a single account with isolated analytics for each domain.",
+      "Manage all your projects from a single account with isolated analytics for each domain.",
   },
   {
     icon: Wrench,
@@ -65,8 +69,7 @@ const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
 const STEPS = [
   {
     title: "Create a project",
-    description:
-      "Sign up and add your site with a name and domain. Takes about 30 seconds.",
+    description: "Sign up and add your site with a name and domain.",
   },
   {
     title: "Add the script tag",
@@ -77,6 +80,27 @@ const STEPS = [
     description:
       "Open your Pulse dashboard and see real visitors, pages, and referrers — immediately.",
   },
+];
+
+const FREE_FEATURES = [
+  "5 projects",
+  "30 days data retention",
+  "Page views tracking",
+  "Referrer tracking",
+  "Device & browser tracking",
+  "Top pages",
+];
+
+const PRO_FEATURES = [
+  "Unlimited projects",
+  "12 months data retention",
+  "Everything in Free",
+  "Custom date ranges",
+  "CSV export",
+  "Weekly email reports",
+  "Real-time visitor count",
+  "Remove Pulse branding",
+  "Developer API access",
 ];
 
 export default function Home() {
@@ -120,6 +144,26 @@ export default function Home() {
           >
             Log in
           </Link>
+        </div>
+
+        <p className="relative mt-4 text-xs text-text-muted">
+          Free forever · No credit card required
+        </p>
+      </section>
+
+      {/* Dashboard screenshot */}
+      <section className="px-6 pb-20 md:pb-28">
+        <div className="mx-auto max-w-5xl">
+          <div className="rounded-2xl border border-white/10 overflow-hidden shadow-2xl shadow-black/40">
+            <Image
+              src={dashboard}
+              alt="Pulse analytics dashboard"
+              width={1456}
+              height={816}
+              className="w-full h-auto"
+              priority
+            />
+          </div>
         </div>
       </section>
 
@@ -183,6 +227,86 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="px-6 py-20 md:py-28 border-t border-white/5">
+        <div className="mx-auto max-w-4xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-accent mb-3">
+            Pricing
+          </p>
+          <h2 className="text-center text-2xl font-bold sm:text-3xl mb-3">
+            Simple, transparent pricing
+          </h2>
+          <p className="text-center text-sm text-text-muted mb-14">
+            Start free, upgrade when you need more. No hidden fees.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Free */}
+            <div className="rounded-xl border border-white/10 bg-card p-8 flex flex-col gap-6">
+              <div>
+                <h3 className="text-sm font-semibold text-text-muted uppercase tracking-widest mb-3">
+                  Free
+                </h3>
+                <div className="flex items-end gap-1">
+                  <span className="text-4xl font-bold">€0</span>
+                  <span className="text-text-muted text-sm mb-1">
+                    / forever
+                  </span>
+                </div>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {FREE_FEATURES.map(f => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2.5 text-sm text-text-muted"
+                  >
+                    <Check size={14} className="text-accent shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <PricingButton
+                plan="free"
+                label="Get started free"
+                variant="secondary"
+              />
+            </div>
+
+            {/* Pro */}
+            <div className="rounded-xl border border-accent/30 bg-accent/5 p-8 flex flex-col gap-6 relative">
+              <span className="absolute top-4 right-4 text-xs font-semibold bg-accent text-white px-2.5 py-1 rounded-full">
+                Most popular
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
+                  Pro
+                </h3>
+                <div className="flex items-end gap-1">
+                  <span className="text-4xl font-bold">€7</span>
+                  <span className="text-text-muted text-sm mb-1">/ month</span>
+                </div>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {PRO_FEATURES.map(f => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2.5 text-sm text-text-muted"
+                  >
+                    <Check size={14} className="text-accent shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <PricingButton
+                plan="pro"
+                label="Get started with Pro"
+                variant="primary"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA banner */}
       <section className="px-6 py-20 md:py-28">
         <div className="mx-auto max-w-3xl rounded-2xl border border-accent/20 bg-accent/5 px-8 py-14 text-center">
@@ -199,6 +323,9 @@ export default function Home() {
           >
             Start for free
           </Link>
+          <p className="mt-4 text-xs text-text-muted">
+            No credit card required
+          </p>
         </div>
       </section>
     </div>
