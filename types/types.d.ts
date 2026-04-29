@@ -13,6 +13,13 @@ interface Project {
   domain: string;
   createdAt: string;
 }
+interface UTMStats {
+  topSources: { source: string; count: number }[];
+  topMediums: { medium: string; count: number }[];
+  topCampaigns: { campaign: string; count: number }[];
+  topContents: { content: string; count: number }[];
+  topTerms: { term: string; count: number }[];
+}
 interface Analytics {
   totalViews: number;
   viewsPerDay: { date: string; count: number }[];
@@ -26,4 +33,7 @@ interface Analytics {
   bounceRate: number;
   entryPages: { url: string; count: number }[];
   timeOnPage: { url: string; avgSeconds: number }[];
+  utmStats: UTMStats;
+  outboundLinks: { url: string; count: number }[];
+  aiTraffic: { referrer: string; count: number }[];
 }

@@ -176,37 +176,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="px-6 py-20 md:py-28 border-t border-white/5">
-        <div className="mx-auto max-w-4xl">
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-accent mb-3">
-            Setup in minutes
-          </p>
-          <h2 className="text-center text-2xl font-bold sm:text-3xl mb-14">
-            Three steps to full visibility
-          </h2>
-
-          <div className="flex flex-col gap-6 md:flex-row md:gap-8">
-            {STEPS.map((step, i) => (
-              <div key={step.title} className="flex-1 flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
-                    {i + 1}
-                  </span>
-                  {i < STEPS.length - 1 && (
-                    <div className="hidden md:block h-px flex-1 bg-white/10" />
-                  )}
-                </div>
-                <h3 className="text-sm font-semibold mt-1">{step.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pricing */}
       <section className="px-6 py-20 md:py-28 border-t border-white/5">
         <div className="mx-auto max-w-4xl">
@@ -283,6 +252,37 @@ export default function Home() {
                 variant="primary"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="px-6 py-20 md:py-28 border-t border-white/5">
+        <div className="mx-auto max-w-4xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-accent mb-3">
+            Setup in minutes
+          </p>
+          <h2 className="text-center text-2xl font-bold sm:text-3xl mb-14">
+            Three steps to full visibility
+          </h2>
+
+          <div className="flex flex-col gap-6 md:flex-row md:gap-8">
+            {STEPS.map((step, i) => (
+              <div key={step.title} className="flex-1 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
+                    {i + 1}
+                  </span>
+                  {i < STEPS.length - 1 && (
+                    <div className="hidden md:block h-px flex-1 bg-white/10" />
+                  )}
+                </div>
+                <h3 className="text-sm font-semibold mt-1">{step.title}</h3>
+                <p className="text-sm text-text-muted leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
