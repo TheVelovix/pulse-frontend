@@ -36,4 +36,5 @@ interface Analytics {
   utmStats: UTMStats;
   outboundLinks: { url: string; count: number }[];
   aiTraffic: { referrer: string; count: number }[];
+  customEvents: { name: string; count: number; totalRevenue: number | null }[];
 }

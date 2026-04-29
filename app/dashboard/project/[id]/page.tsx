@@ -308,6 +308,21 @@ export default function ProjectPage() {
             count: c.count,
           }))}
         />
+
+        {/*Custom Events*/}
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
+          <StatList
+            title="Custom Events"
+            items={analytics.customEvents.map(e => ({
+              label:
+                e.totalRevenue != null
+                  ? `${e.name} (€${e.totalRevenue.toFixed(2)})`
+                  : e.name,
+              count: e.count,
+            }))}
+          />
+        )}
+        {/*UTM Stats*/}
         {session.user?.subscriptionPlan === SubscriptionPlan.PRO &&
           analytics.utmStats && (
             <div>

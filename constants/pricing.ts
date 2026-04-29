@@ -20,6 +20,7 @@ export const PRO_FEATURES = [
   "CSV export",
   "Weekly email reports",
   "Real-time visitor count",
+  "Custom events & revenue tracking",
   "Remove Pulse branding",
   "Developer API access",
   "Time on page tracking",
