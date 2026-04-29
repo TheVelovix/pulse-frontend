@@ -13,6 +13,7 @@ import {
 import { Metadata } from "next";
 import PricingButton from "@/components/PricingButton";
 import dashboard from "@/images/dashboard.png";
+import { FREE_FEATURES, PRO_FEATURES } from "@/constants/pricing";
 
 export const metadata: Metadata = {
   title: "Pulse — Privacy-Friendly Website Analytics",
@@ -80,27 +81,6 @@ const STEPS = [
     description:
       "Open your Pulse dashboard and see real visitors, pages, and referrers — immediately.",
   },
-];
-
-const FREE_FEATURES = [
-  "5 projects",
-  "30 days data retention",
-  "Page views tracking",
-  "Referrer tracking",
-  "Device & browser tracking",
-  "Top pages",
-];
-
-const PRO_FEATURES = [
-  "Unlimited projects",
-  "12 months data retention",
-  "Everything in Free",
-  "Custom date ranges",
-  "CSV export",
-  "Weekly email reports",
-  "Real-time visitor count",
-  "Remove Pulse branding",
-  "Developer API access",
 ];
 
 export default function Home() {

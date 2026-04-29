@@ -25,4 +25,5 @@ interface Analytics {
   uniqueVisitors: number;
   bounceRate: number;
   entryPages: { url: string; count: number }[];
+  timeOnPage: { url: string; avgSeconds: number }[];
 }
