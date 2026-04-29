@@ -1,27 +1,6 @@
 import { Check } from "lucide-react";
 import PricingButton from "@/components/PricingButton";
-
-const FREE_FEATURES = [
-  "5 projects",
-  "30 days data retention",
-  "Page views tracking",
-  "Referrer tracking",
-  "Device & browser tracking",
-  "Top pages",
-  "Pulse branding on dashboard",
-];
-
-const PRO_FEATURES = [
-  "Unlimited projects",
-  "12 months data retention",
-  "Everything in Free",
-  "Custom date ranges",
-  "CSV export",
-  "Weekly email reports",
-  "Real-time visitor count",
-  "Remove Pulse branding",
-  "Developer API access",
-];
+import { FREE_FEATURES, PRO_FEATURES } from "@/constants/pricing";
 
 export default function PricingPage() {
   return (

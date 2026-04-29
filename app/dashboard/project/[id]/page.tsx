@@ -31,7 +31,6 @@ export default function ProjectPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const session = useSession();
-  console.log(analytics);
   useEffect(() => {
     fetch(`/api/projects`, { credentials: "include" })
       .then(res => res.json())
@@ -251,6 +250,15 @@ export default function ProjectPage() {
             count: p.count,
           }))}
         />
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
+          <StatList
+            title="Time on Page (avg. seconds)"
+            items={analytics.timeOnPage.map(p => ({
+              label: p.url,
+              count: p.avgSeconds,
+            }))}
+          />
+        )}
         <StatList
           title="Top Referrers"
           items={analytics.topReferrers.map(r => ({
