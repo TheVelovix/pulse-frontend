@@ -21,4 +21,8 @@ interface Analytics {
   devices: { device: string; count: number }[];
   browsers: { browser: string; count: number }[];
   countries: { country: string; count: number }[];
+  operatingSystems: { os: string; count: number }[];
+  uniqueVisitors: number;
+  bounceRate: number;
+  entryPages: { url: string; count: number }[];
 }

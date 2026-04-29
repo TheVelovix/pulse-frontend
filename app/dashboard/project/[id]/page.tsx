@@ -31,7 +31,7 @@ export default function ProjectPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const session = useSession();
-
+  console.log(analytics);
   useEffect(() => {
     fetch(`/api/projects`, { credentials: "include" })
       .then(res => res.json())
@@ -171,6 +171,18 @@ export default function ProjectPage() {
             {analytics.totalViews.toLocaleString()}
           </p>
         </div>
+        {/* Unique Visitors */}
+        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
+          <p className="text-text-muted text-sm mb-1">Unique Visitors</p>
+          <p className="text-3xl font-bold">{analytics.uniqueVisitors}</p>
+        </div>
+        {/* Bounce Rate */}
+        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
+          <p className="text-text-muted text-sm mb-1">Bounce Rate</p>
+          <p className="text-3xl font-bold">
+            {(analytics.bounceRate * 100).toFixed(1)}%
+          </p>
+        </div>
         {/*Live Views*/}
         <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
           <p className="text-text-muted text-sm mb-1">Live Views</p>
@@ -226,6 +238,13 @@ export default function ProjectPage() {
       {/* Lists grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatList
+          title="Entry Pages"
+          items={analytics.entryPages.map(p => ({
+            label: p.url,
+            count: p.count,
+          }))}
+        />
+        <StatList
           title="Top Pages"
           items={analytics.topPages.map(p => ({
             label: p.url,
@@ -244,6 +263,13 @@ export default function ProjectPage() {
           items={analytics.devices.map(d => ({
             label: d.device ?? "Unknown",
             count: d.count,
+          }))}
+        />
+        <StatList
+          title="Operating Systems"
+          items={analytics.operatingSystems.map(os => ({
+            label: os.os ?? "Unknown",
+            count: os.count,
           }))}
         />
         <StatList
