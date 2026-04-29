@@ -162,7 +162,7 @@ export default function ProjectPage() {
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         {/* Total Views */}
         <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
           <p className="text-text-muted text-sm mb-1">Total Views</p>
@@ -267,6 +267,20 @@ export default function ProjectPage() {
           }))}
         />
         <StatList
+          title="AI Referrers"
+          items={analytics.aiTraffic.map(r => ({
+            label: r.referrer ?? "Direct",
+            count: r.count,
+          }))}
+        />
+        <StatList
+          title="Outbound Links"
+          items={analytics.outboundLinks.map(r => ({
+            label: r.url,
+            count: r.count,
+          }))}
+        />
+        <StatList
           title="Devices"
           items={analytics.devices.map(d => ({
             label: d.device ?? "Unknown",
@@ -294,6 +308,51 @@ export default function ProjectPage() {
             count: c.count,
           }))}
         />
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO &&
+          analytics.utmStats && (
+            <div>
+              <h2 className="text-sm font-medium text-text-muted mb-4">
+                UTM Campaign Tracking
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatList
+                  title="Sources"
+                  items={analytics.utmStats.topSources.map(s => ({
+                    label: s.source ?? "Unknown",
+                    count: s.count,
+                  }))}
+                />
+                <StatList
+                  title="Mediums"
+                  items={analytics.utmStats.topMediums.map(m => ({
+                    label: m.medium ?? "Unknown",
+                    count: m.count,
+                  }))}
+                />
+                <StatList
+                  title="Campaigns"
+                  items={analytics.utmStats.topCampaigns.map(c => ({
+                    label: c.campaign ?? "Unknown",
+                    count: c.count,
+                  }))}
+                />
+                <StatList
+                  title="Content"
+                  items={analytics.utmStats.topContents.map(c => ({
+                    label: c.content ?? "Unknown",
+                    count: c.count,
+                  }))}
+                />
+                <StatList
+                  title="Terms"
+                  items={analytics.utmStats.topTerms.map(t => ({
+                    label: t.term ?? "Unknown",
+                    count: t.count,
+                  }))}
+                />
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

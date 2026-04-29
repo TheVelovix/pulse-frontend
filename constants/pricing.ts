@@ -7,18 +7,21 @@ export const FREE_FEATURES = [
   "Entry pages",
   "Top pages",
   "Referrer tracking",
+  "Outbound link tracking",
+  "AI traffic source detection",
   "Device, OS & browser tracking",
 ];
 
 export const PRO_FEATURES = [
+  "Everything in Free",
   "Unlimited projects",
   "2 years data retention",
-  "Everything in Free",
   "Custom date ranges",
   "CSV export",
   "Weekly email reports",
   "Real-time visitor count",
   "Remove Pulse branding",
   "Developer API access",
-  "Time on Page tracking",
+  "Time on page tracking",
+  "UTM campaign tracking",
 ];
