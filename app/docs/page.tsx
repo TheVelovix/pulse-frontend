@@ -1,4 +1,12 @@
-import { BookOpen, Zap, Key, BarChart2, Layers, Radio } from "lucide-react";
+import {
+  BookOpen,
+  Zap,
+  Key,
+  BarChart2,
+  Layers,
+  Radio,
+  MousePointerClick,
+} from "lucide-react";
 
 const NAV = [
   { id: "introduction", label: "Introduction" },
@@ -7,6 +15,7 @@ const NAV = [
   { id: "projects", label: "Projects" },
   { id: "analytics", label: "Analytics" },
   { id: "live-views", label: "Live Views" },
+  { id: "custom-events", label: "Custom Events" },
 ];
 
 function CodeBlock({ children }: { children: string }) {
@@ -328,7 +337,7 @@ export default function DocsPage() {
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
             Query aggregated analytics for any of your projects. Data is
-            retained for 30 days on the Free plan and 12 months on Pro.
+            retained for 30 days on the Free plan and 2 years on Pro.
           </p>
 
           <Endpoint
@@ -464,6 +473,135 @@ es.onmessage = (e) => {
                 401
               </code>{" "}
               for Free accounts.
+            </p>
+          </div>
+        </section>
+        {/* Custom Events */}
+        <section id="custom-events" className="flex flex-col gap-6 pb-10">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent shrink-0">
+              <MousePointerClick size={18} />
+            </div>
+            <h2 className="text-xl font-bold">Custom Events</h2>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Custom events let you track specific actions on your site like
+            signups, purchases, or button clicks. They are available to Pro
+            subscribers and require the Pulse script to be installed.
+          </p>
+
+          {/* Basic usage */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">Basic usage</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Once the script is installed, call{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
+                window.pulse.track()
+              </code>{" "}
+              from anywhere on your site.
+            </p>
+            <CodeBlock>{`// simple event
+        pulse.track("signup");
+
+        // with custom properties
+        pulse.track("purchase", { plan: "pro" });
+
+        // 404 tracking
+        pulse.track("404", { path: window.location.pathname });`}</CodeBlock>
+          </div>
+
+          {/* TypeScript support */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">TypeScript support</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              For intellisense and type safety, paste this declaration file into
+              your project:
+            </p>
+            <CodeBlock>{`// pulse.d.ts
+        interface PulseProps {
+          [key: string]: string | number | boolean;
+        }
+
+        interface Pulse {
+          track: (name: string, props?: PulseProps) => void;
+        }
+
+        declare global {
+          interface Window {
+            pulse: Pulse;
+          }
+        }`}</CodeBlock>
+          </div>
+
+          {/* Revenue tracking */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">Revenue tracking</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Pass a{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
+                revenue
+              </code>{" "}
+              property to track monetary value associated with an event. Revenue
+              is displayed separately in your dashboard.
+            </p>
+            <CodeBlock>{`pulse.track("purchase", { plan: "pro", revenue: 7.00 });`}</CodeBlock>
+          </div>
+
+          {/* API endpoint */}
+          <Endpoint
+            method="POST"
+            path="/api/events"
+            description="Records a custom event for a project. Called automatically by pulse.track() — you rarely need to call this directly."
+            params={[
+              {
+                name: "projectId",
+                in: "body",
+                required: true,
+                description: "The project UUID.",
+              },
+              {
+                name: "name",
+                in: "body",
+                required: true,
+                description: "Event name (e.g. signup, purchase, 404).",
+              },
+              {
+                name: "url",
+                in: "body",
+                required: false,
+                description: "Page URL where the event occurred.",
+              },
+              {
+                name: "visitorId",
+                in: "body",
+                required: false,
+                description: "Visitor ID from localStorage.",
+              },
+              {
+                name: "revenue",
+                in: "body",
+                required: false,
+                description: "Monetary value associated with the event.",
+              },
+              {
+                name: "props",
+                in: "body",
+                required: false,
+                description: "Key-value pairs of custom properties.",
+              },
+            ]}
+            response={`200 OK`}
+          />
+
+          <div className="rounded-xl border border-accent/20 bg-accent/5 p-5">
+            <p className="text-sm font-semibold mb-1">Pro only</p>
+            <p className="text-sm text-text-muted">
+              Custom events are only available on the Pro plan. Calls from Free
+              plan projects return{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
+                403
+              </code>
+              .
             </p>
           </div>
         </section>
