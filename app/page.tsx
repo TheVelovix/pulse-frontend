@@ -98,7 +98,7 @@ export default function Home() {
 
         <span className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-card px-4 py-1.5 text-xs font-medium text-text-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          Simple · Lightweight · Privacy-first
+          One script tag. Full analytics. No cost.
         </span>
 
         <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
