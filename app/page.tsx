@@ -98,12 +98,12 @@ export default function Home() {
 
         <span className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-card px-4 py-1.5 text-xs font-medium text-text-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          One script tag. Full analytics. No cost.
+          Simple · Lightweight · Privacy-first
         </span>
 
         <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          Privacy-friendly website analytics,
-          <span className="text-accent"> without the complexity</span>
+          One script tag. Full analytics. 
+          <span className="text-accent"> No cost.</span>
         </h1>
 
         <p className="relative mt-6 max-w-xl text-base text-text-muted md:text-lg">
