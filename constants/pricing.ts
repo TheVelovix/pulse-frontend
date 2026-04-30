@@ -25,4 +25,5 @@ export const PRO_FEATURES = [
   "Developer API access",
   "Time on page tracking",
   "UTM campaign tracking",
+  "Public dashboard",
 ];
