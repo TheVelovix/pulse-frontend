@@ -12,6 +12,8 @@ interface Project {
   name: string;
   domain: string;
   createdAt: string;
+  isPublic: boolean;
+  publicSlug: string | null;
 }
 interface UTMStats {
   topSources: { source: string; count: number }[];
