@@ -2,19 +2,11 @@
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
 import DateRangePicker from "@/components/DateRangePicker";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
+import ProjectAnalytics from "@/components/ProjectAnalytics";
 
 const DATE_RANGES = [
   { label: "7d", value: 7 },
@@ -95,7 +87,10 @@ export default function ProjectPage() {
     <div className="mx-auto max-w-7xl w-full px-6 py-10 flex flex-col gap-8">
       {/* Header */}
       <div className="flex items-center justify-between flex-col gap-6 md:flex-row md:gap-0">
-        <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
+          {project?.isPublic && <p>Public slug: {project.publicSlug}</p>}
+        </div>
         <div className="flex gap-2">
           {DATE_RANGES.map(range => {
             if (
@@ -162,213 +157,11 @@ export default function ProjectPage() {
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
-      <div className="flex gap-3 flex-wrap">
-        {/* Total Views */}
-        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
-          <p className="text-text-muted text-sm mb-1">Total Views</p>
-          <p className="text-3xl font-bold">
-            {analytics.totalViews.toLocaleString()}
-          </p>
-        </div>
-        {/* Unique Visitors */}
-        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
-          <p className="text-text-muted text-sm mb-1">Unique Visitors</p>
-          <p className="text-3xl font-bold">{analytics.uniqueVisitors}</p>
-        </div>
-        {/* Bounce Rate */}
-        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
-          <p className="text-text-muted text-sm mb-1">Bounce Rate</p>
-          <p className="text-3xl font-bold">
-            {(analytics.bounceRate * 100).toFixed(1)}%
-          </p>
-        </div>
-        {/*Live Views*/}
-        <div className="bg-card border border-white/10 rounded-lg p-6 w-fit min-w-40">
-          <p className="text-text-muted text-sm mb-1">Live Views</p>
-          <p className="text-3xl font-bold">{liveVisitors}</p>
-        </div>
-      </div>
-      {/* Views per day chart */}
-      <div className="bg-card border border-white/10 rounded-lg p-6">
-        <h2 className="text-sm font-medium text-text-muted mb-4">
-          Views per day
-        </h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={analytics.viewsPerDay}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.05)"
-            />
-            <XAxis
-              dataKey="date"
-              tick={{ fill: "#6b7280", fontSize: 12 }}
-              tickFormatter={val =>
-                new Date(val).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
-              }
-            />
-            <YAxis tick={{ fill: "#6b7280", fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{
-                background: "#111111",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "8px",
-              }}
-              labelFormatter={val =>
-                new Date(val).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
-              }
-            />
-            <Line
-              type="monotone"
-              dataKey="count"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Lists grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatList
-          title="Entry Pages"
-          items={analytics.entryPages.map(p => ({
-            label: p.url,
-            count: p.count,
-          }))}
-        />
-        <StatList
-          title="Top Pages"
-          items={analytics.topPages.map(p => ({
-            label: p.url,
-            count: p.count,
-          }))}
-        />
-        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
-          <StatList
-            title="Time on Page (avg. seconds)"
-            items={analytics.timeOnPage.map(p => ({
-              label: p.url,
-              count: p.avgSeconds,
-            }))}
-          />
-        )}
-        <StatList
-          title="Top Referrers"
-          items={analytics.topReferrers.map(r => ({
-            label: r.referrer ?? "Direct",
-            count: r.count,
-          }))}
-        />
-        <StatList
-          title="AI Referrers"
-          items={analytics.aiTraffic.map(r => ({
-            label: r.referrer ?? "Direct",
-            count: r.count,
-          }))}
-        />
-        <StatList
-          title="Outbound Links"
-          items={analytics.outboundLinks.map(r => ({
-            label: r.url,
-            count: r.count,
-          }))}
-        />
-        <StatList
-          title="Devices"
-          items={analytics.devices.map(d => ({
-            label: d.device ?? "Unknown",
-            count: d.count,
-          }))}
-        />
-        <StatList
-          title="Operating Systems"
-          items={analytics.operatingSystems.map(os => ({
-            label: os.os ?? "Unknown",
-            count: os.count,
-          }))}
-        />
-        <StatList
-          title="Browsers"
-          items={analytics.browsers.map(b => ({
-            label: b.browser ?? "Unknown",
-            count: b.count,
-          }))}
-        />
-        <StatList
-          title="Countries"
-          items={analytics.countries.map(c => ({
-            label: c.country ?? "Unknown",
-            count: c.count,
-          }))}
-        />
-
-        {/*Custom Events*/}
-        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
-          <StatList
-            title="Custom Events"
-            items={analytics.customEvents.map(e => ({
-              label:
-                e.totalRevenue != null
-                  ? `${e.name} (€${e.totalRevenue.toFixed(2)})`
-                  : e.name,
-              count: e.count,
-            }))}
-          />
-        )}
-        {/*UTM Stats*/}
-        {session.user?.subscriptionPlan === SubscriptionPlan.PRO &&
-          analytics.utmStats && (
-            <div>
-              <h2 className="text-sm font-medium text-text-muted mb-4">
-                UTM Campaign Tracking
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <StatList
-                  title="Sources"
-                  items={analytics.utmStats.topSources.map(s => ({
-                    label: s.source ?? "Unknown",
-                    count: s.count,
-                  }))}
-                />
-                <StatList
-                  title="Mediums"
-                  items={analytics.utmStats.topMediums.map(m => ({
-                    label: m.medium ?? "Unknown",
-                    count: m.count,
-                  }))}
-                />
-                <StatList
-                  title="Campaigns"
-                  items={analytics.utmStats.topCampaigns.map(c => ({
-                    label: c.campaign ?? "Unknown",
-                    count: c.count,
-                  }))}
-                />
-                <StatList
-                  title="Content"
-                  items={analytics.utmStats.topContents.map(c => ({
-                    label: c.content ?? "Unknown",
-                    count: c.count,
-                  }))}
-                />
-                <StatList
-                  title="Terms"
-                  items={analytics.utmStats.topTerms.map(t => ({
-                    label: t.term ?? "Unknown",
-                    count: t.count,
-                  }))}
-                />
-              </div>
-            </div>
-          )}
-      </div>
+      <ProjectAnalytics
+        analytics={analytics}
+        liveVisitors={liveVisitors}
+        isPro={session.user?.subscriptionPlan === SubscriptionPlan.PRO}
+      />
     </div>
   );
 }
@@ -444,41 +237,6 @@ function ScriptModal({
           {copied ? "Copied!" : "Copy to clipboard"}
         </button>
       </div>
-    </div>
-  );
-}
-
-function StatList({
-  title,
-  items,
-}: {
-  title: string;
-  items: { label: string; count: number }[];
-}) {
-  const total = items.reduce((sum, item) => sum + item.count, 0);
-  return (
-    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-scroll">
-      <h2 className="text-sm font-medium text-text-muted mb-4">{title}</h2>
-      {items.length === 0 ? (
-        <p className="text-text-muted text-xs">No data</p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {items.map((item, i) => (
-            <li key={i} className="flex items-center justify-between text-sm">
-              <div className="relative flex-1 mr-4">
-                <div
-                  className="absolute inset-y-0 left-0 bg-accent/10 rounded"
-                  style={{ width: `${(item.count / total) * 100}%` }}
-                />
-                <span className="relative px-2 py-0.5 truncate block">
-                  {item.label}
-                </span>
-              </div>
-              <span className="text-text-muted shrink-0">{item.count}</span>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }

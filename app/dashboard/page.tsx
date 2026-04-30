@@ -82,6 +82,29 @@ export default function Dashboard() {
     }
     toast.success("Project deleted successfully.");
   }
+  async function handleToggleVisibility(id: string) {
+    const res = await fetchWithAuth(`/api/projects/${id}/visibility`, {
+      method: "PATCH",
+    });
+    if (!res.ok) {
+      toast.error("Failed to update visibility.");
+      return;
+    }
+    const data: { isPublic: boolean; publicSlug: string | null } = await res.json();
+    setProjects(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, isPublic: data.isPublic, publicSlug: data.publicSlug } : p,
+      ),
+    );
+    if (data.isPublic && data.publicSlug) {
+      const url = `${window.location.origin}/public/${data.publicSlug}`;
+      navigator.clipboard.writeText(url).catch(() => {});
+      toast.success("Project is now public — link copied to clipboard.");
+    } else {
+      toast.success("Project is now private.");
+    }
+  }
+
   async function handleCreate(e: React.SubmitEvent) {
     e.preventDefault();
     const res = await fetchWithAuth("/api/projects", {
@@ -126,7 +149,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects.map(project => (
             <a href={`/dashboard/project/${project.id}`} key={project.id}>
-              <Card item={project} onDelete={handleDelete} />
+              <Card item={project} onDelete={handleDelete} onToggleVisibility={handleToggleVisibility} />
             </a>
           ))}
         </div>
