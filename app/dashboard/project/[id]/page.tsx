@@ -7,6 +7,7 @@ import DateRangePicker from "@/components/DateRangePicker";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
 import ProjectAnalytics from "@/components/ProjectAnalytics";
+import { CopyIcon } from "@phosphor-icons/react/dist/ssr";
 
 const DATE_RANGES = [
   { label: "7d", value: 7 },
@@ -76,9 +77,14 @@ export default function ProjectPage() {
 
     return () => eventSource.close();
   }, [id]);
-  if (loading)
-    return <p className="text-text-muted text-sm p-10">Loading...</p>;
-  if (!analytics)
+  function copyPublicLink() {
+    navigator.clipboard
+      .writeText(
+        `https://pulse.velovix.com/public-dashboard/${project?.publicSlug}`,
+      )
+      .then(() => toast.success("Copied public dashboard link"));
+  }
+  if (!analytics && !loading)
     return (
       <p className="text-text-muted text-sm p-10">Failed to load analytics.</p>
     );
@@ -86,12 +92,23 @@ export default function ProjectPage() {
   return (
     <div className="mx-auto max-w-7xl w-full px-6 py-10 flex flex-col gap-8">
       {/* Header */}
-      <div className="flex items-center justify-between flex-col gap-6 md:flex-row md:gap-0">
-        <div className="flex items-center gap-2">
+      <div className="flex justify-between flex-col gap-6 md:flex-row md:gap-0">
+        <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold">{project?.name} Analytics</h1>
-          {project?.isPublic && <p>Public slug: {project.publicSlug}</p>}
+          {project?.isPublic && (
+            <div>
+              <p>Public slug: {project.publicSlug}</p>
+              <button
+                onClick={copyPublicLink}
+                className="flex items-center justify-center gap-2 mt-2 bg-card border border-white/10 rounded-lg p-2 cursor-pointer transition-all duration-200 hover:opacity-80"
+              >
+                <CopyIcon />
+                <p className="text-md">Copy Public Link</p>
+              </button>
+            </div>
+          )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {DATE_RANGES.map(range => {
             if (
               range.label === "All time" &&
@@ -158,7 +175,7 @@ export default function ProjectPage() {
         onClose={() => setShowScriptModal(false)}
       />
       <ProjectAnalytics
-        analytics={analytics}
+        analytics={analytics!}
         liveVisitors={liveVisitors}
         isPro={session.user?.subscriptionPlan === SubscriptionPlan.PRO}
       />
