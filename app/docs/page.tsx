@@ -203,7 +203,7 @@ export default function DocsPage() {
             </a>{" "}
             page.
           </p>
-          <CodeBlock>{`curl https://api.pulse.velovix.com/api/projects \\
+          <CodeBlock>{`curl https://api.pulse.velovix.com/api/v1/projects \\
   -H "X-Api-Key: pulse_live_your_key_here"`}</CodeBlock>
           <div className="rounded-xl border border-white/10 bg-card p-5 flex flex-col gap-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
@@ -212,20 +212,20 @@ export default function DocsPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 text-sm">
                 <Badge method="GET" />
-                <code className="font-mono text-xs">/api/user/apiKeys</code>
+                <code className="font-mono text-xs">/api/v1/user/apiKeys</code>
                 <span className="text-text-muted">List your API keys</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Badge method="POST" />
                 <code className="font-mono text-xs">
-                  /api/user/apiKeys?name=
+                  /api/v1/user/apiKeys?name=
                 </code>
                 <span className="text-text-muted">Create a new key</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Badge method="DELETE" />
                 <code className="font-mono text-xs">
-                  /api/user/apiKeys?name=
+                  /api/v1/user/apiKeys?name=
                 </code>
                 <span className="text-text-muted">Revoke a key by name</span>
               </div>
@@ -258,7 +258,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="GET"
-            path="/api/projects"
+            path="/api/v1/projects"
             description="Returns all projects belonging to the authenticated user."
             response={`[
   {
@@ -272,7 +272,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="GET"
-            path="/api/projects/{id}"
+            path="/api/v1/projects/{id}"
             description="Returns a single project by its ID."
             params={[
               {
@@ -292,7 +292,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="POST"
-            path="/api/projects"
+            path="/api/v1/projects"
             description="Creates a new project. Free accounts are limited to 5 projects."
             params={[
               {
@@ -313,7 +313,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="DELETE"
-            path="/api/projects/{id}"
+            path="/api/v1/projects/{id}"
             description="Permanently deletes a project and all its analytics data."
             params={[
               {
@@ -342,7 +342,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="GET"
-            path="/api/analytics/{id}"
+            path="/api/v1/analytics/{id}"
             description="Returns aggregated analytics for a project over the given time range."
             params={[
               {
@@ -389,7 +389,7 @@ export default function DocsPage() {
 
           <Endpoint
             method="GET"
-            path="/api/analytics/{id}/export"
+            path="/api/v1/analytics/{id}/export"
             description="Returns the same analytics payload as a downloadable CSV file."
             params={[
               {
@@ -436,7 +436,7 @@ date,views
 
           <Endpoint
             method="GET"
-            path="/api/analytics/{id}/live"
+            path="/api/v1/analytics/{id}/live"
             description="Opens a persistent SSE stream that emits the live visitor count."
             params={[
               {
@@ -501,13 +501,13 @@ es.onmessage = (e) => {
               from anywhere on your site.
             </p>
             <CodeBlock>{`// simple event
-        pulse.track("signup");
+pulse.track("signup");
 
-        // with custom properties
-        pulse.track("purchase", { plan: "pro" });
+// with custom properties
+pulse.track("purchase", { plan: "pro" });
 
-        // 404 tracking
-        pulse.track("404", { path: window.location.pathname });`}</CodeBlock>
+// 404 tracking
+pulse.track("404", { path: window.location.pathname });`}</CodeBlock>
           </div>
 
           {/* TypeScript support */}
@@ -518,19 +518,17 @@ es.onmessage = (e) => {
               your project:
             </p>
             <CodeBlock>{`// pulse.d.ts
-        interface PulseProps {
-          [key: string]: string | number | boolean;
-        }
+interface PulseProps {
+  [key: string]: string | number | boolean;
 
-        interface Pulse {
-          track: (name: string, props?: PulseProps) => void;
-        }
+interface Pulse {
+  track: (name: string, props?: PulseProps) => void;
 
-        declare global {
-          interface Window {
-            pulse: Pulse;
-          }
-        }`}</CodeBlock>
+declare global {
+  interface Window {
+    pulse: Pulse;
+  }
+}`}</CodeBlock>
           </div>
 
           {/* Revenue tracking */}
@@ -550,7 +548,7 @@ es.onmessage = (e) => {
           {/* API endpoint */}
           <Endpoint
             method="POST"
-            path="/api/events"
+            path="/api/v1/events"
             description="Records a custom event for a project. Called automatically by pulse.track() — you rarely need to call this directly."
             params={[
               {
