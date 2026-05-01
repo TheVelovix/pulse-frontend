@@ -5,6 +5,7 @@ import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
+import { Skeleton } from "boneyard-js/react";
 
 const emptyForm = { name: "", domain: "" };
 const ANIM_DURATION = 200;
@@ -44,6 +45,7 @@ function JustSubscribed() {
 
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -53,7 +55,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     const controller = new AbortController();
-    getProjects(controller).then(projects => setProjects(projects));
+    getProjects(controller).then(projects => {
+      setProjects(projects);
+      setLoadingProjects(false);
+    });
     if (!user) router.replace("/");
     return () => controller.abort();
   }, []);
@@ -90,10 +95,13 @@ export default function Dashboard() {
       toast.error("Failed to update visibility.");
       return;
     }
-    const data: { isPublic: boolean; publicSlug: string | null } = await res.json();
+    const data: { isPublic: boolean; publicSlug: string | null } =
+      await res.json();
     setProjects(prev =>
       prev.map(p =>
-        p.id === id ? { ...p, isPublic: data.isPublic, publicSlug: data.publicSlug } : p,
+        p.id === id
+          ? { ...p, isPublic: data.isPublic, publicSlug: data.publicSlug }
+          : p,
       ),
     );
     if (data.isPublic && data.publicSlug) {
@@ -133,27 +141,60 @@ export default function Dashboard() {
         {user?.subscriptionPlan === SubscriptionPlan.FREE && (
           <p>{projects.length}/5 projects</p>
         )}
-        {projects.length < 5 && (
-          <button
-            onClick={openForm}
-            className="text-sm font-medium bg-accent hover:bg-accent-hover transition-colors duration-200 px-4 py-2 rounded-md cursor-pointer"
-          >
-            + Create Project
-          </button>
-        )}
+        {user?.subscriptionPlan === SubscriptionPlan.PRO ||
+          (user?.subscriptionPlan === SubscriptionPlan.FREE &&
+            projects.length < 5 && (
+              <button
+                onClick={openForm}
+                className="text-sm font-medium bg-accent hover:bg-accent-hover transition-colors duration-200 px-4 py-2 rounded-md cursor-pointer"
+              >
+                + Create Project
+              </button>
+            ))}
       </div>
 
-      {projects.length === 0 ? (
-        <p className="text-text-muted text-sm">No projects found.</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {projects.map(project => (
-            <a href={`/dashboard/project/${project.id}`} key={project.id}>
-              <Card item={project} onDelete={handleDelete} onToggleVisibility={handleToggleVisibility} />
-            </a>
-          ))}
-        </div>
-      )}
+      <Skeleton
+        loading={loadingProjects}
+        name="project-grid"
+        animate="shimmer"
+        darkColor="#1a1a1a"
+        transition
+        fallback={
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-card border border-white/10 rounded-lg p-4 flex flex-col gap-3">
+                <div className="h-4 w-1/2 rounded bg-white/10" />
+                <div className="h-3 w-1/3 rounded bg-white/5" />
+              </div>
+            ))}
+          </div>
+        }
+        fixture={
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[{ id: "1", name: "My Site", domain: "example.com", createdAt: new Date().toISOString(), isPublic: false, publicSlug: null }].map(project => (
+              <a href={`/dashboard/project/${project.id}`} key={project.id}>
+                <Card item={project} onDelete={handleDelete} onToggleVisibility={handleToggleVisibility} />
+              </a>
+            ))}
+          </div>
+        }
+      >
+        {projects.length === 0 ? (
+          <p className="text-text-muted text-sm">No projects found.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {projects.map(project => (
+              <a href={`/dashboard/project/${project.id}`} key={project.id}>
+                <Card
+                  item={project}
+                  onDelete={handleDelete}
+                  onToggleVisibility={handleToggleVisibility}
+                />
+              </a>
+            ))}
+          </div>
+        )}
+      </Skeleton>
 
       {showForm && (
         <div
