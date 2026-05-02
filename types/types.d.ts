@@ -27,10 +27,16 @@ interface Analytics {
   viewsPerDay: { date: string; count: number }[];
   topPages: { url: string; count: number }[];
   topReferrers: { referrer: string; count: number }[];
-  devices: { device: string; count: number }[];
-  browsers: { browser: string; count: number }[];
+  devices: {
+    deviceFamily: string;
+    deviceBrand: string;
+    deviceModel: string;
+    isSpider: boolean;
+    count: number;
+  }[];
+  browsers: { browser: string; browserMajor: string; count: number }[];
   countries: { country: string; count: number }[];
-  operatingSystems: { os: string; count: number }[];
+  operatingSystems: { os: string; osMajor: string; count: number }[];
   uniqueVisitors: number;
   bounceRate: number;
   entryPages: { url: string; count: number }[];
