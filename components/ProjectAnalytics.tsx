@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import StatList from "./StatList";
 import SearchConsoleList from "./SearchConsoleList";
+import StatTable from "./StatTable";
 
 export default function ProjectAnalytics({
   analytics,
@@ -142,26 +143,34 @@ export default function ProjectAnalytics({
             count: r.count,
           }))}
         />
-        <StatList
+        <StatTable
           title="Devices"
-          items={analytics.devices.map(d => ({
-            label: d.device ?? "Unknown",
-            count: d.count,
-          }))}
+          items={analytics.devices}
+          columns={[
+            { key: "deviceFamily", label: "Family" },
+            { key: "deviceBrand", label: "Brand" },
+            { key: "deviceModel", label: "Model" },
+            { key: "isSpider", label: "Is Spider" },
+            { key: "count", label: "Views" },
+          ]}
         />
-        <StatList
+        <StatTable
           title="Operating Systems"
-          items={analytics.operatingSystems.map(os => ({
-            label: os.os ?? "Unknown",
-            count: os.count,
-          }))}
+          items={analytics.operatingSystems}
+          columns={[
+            { key: "os", label: "OS Family" },
+            { key: "osMajor", label: "OS Major" },
+            { key: "count", label: "Count" },
+          ]}
         />
-        <StatList
+        <StatTable
           title="Browsers"
-          items={analytics.browsers.map(b => ({
-            label: b.browser ?? "Unknown",
-            count: b.count,
-          }))}
+          items={analytics.browsers}
+          columns={[
+            { key: "browser", label: "Browser" },
+            { key: "browserMajor", label: "Version" },
+            { key: "count", label: "Views" },
+          ]}
         />
         <StatList
           title="Countries"
