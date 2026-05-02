@@ -102,7 +102,7 @@ export default function Home() {
         </span>
 
         <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          One script tag. Full analytics. 
+          One script tag. Full analytics.
           <span className="text-accent"> No cost.</span>
         </h1>
 
@@ -224,7 +224,7 @@ export default function Home() {
             {/* Pro */}
             <div className="rounded-xl border border-accent/30 bg-accent/5 p-8 flex flex-col gap-6 relative">
               <span className="absolute top-4 right-4 text-xs font-semibold bg-accent text-white px-2.5 py-1 rounded-full">
-                Most popular
+                Best Value
               </span>
               <div>
                 <h3 className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">

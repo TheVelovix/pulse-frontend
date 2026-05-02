@@ -27,4 +27,5 @@ export const PRO_FEATURES = [
   "UTM campaign tracking",
   "Public dashboard",
   "Google Search Console Integration",
+  "Google Analytics Import",
 ];
