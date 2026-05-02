@@ -40,3 +40,10 @@ interface Analytics {
   aiTraffic: { referrer: string; count: number }[];
   customEvents: { name: string; count: number; totalRevenue: number | null }[];
 }
+interface GoogleSearchConsoleData {
+  query: string;
+  clicks: number;
+  impressions: number;
+  ctr: float;
+  position: float;
+}
