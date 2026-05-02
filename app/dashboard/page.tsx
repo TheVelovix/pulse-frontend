@@ -142,15 +142,15 @@ export default function Dashboard() {
           <p>{projects.length}/5 projects</p>
         )}
         {user?.subscriptionPlan === SubscriptionPlan.PRO ||
-          (user?.subscriptionPlan === SubscriptionPlan.FREE &&
-            projects.length < 5 && (
-              <button
-                onClick={openForm}
-                className="text-sm font-medium bg-accent hover:bg-accent-hover transition-colors duration-200 px-4 py-2 rounded-md cursor-pointer"
-              >
-                + Create Project
-              </button>
-            ))}
+        (user?.subscriptionPlan === SubscriptionPlan.FREE &&
+          projects.length < 5) ? (
+          <button
+            onClick={openForm}
+            className="text-sm font-medium bg-accent hover:bg-accent-hover transition-colors duration-200 px-4 py-2 rounded-md cursor-pointer"
+          >
+            + Create Project
+          </button>
+        ) : null}
       </div>
 
       <Skeleton
@@ -162,7 +162,10 @@ export default function Dashboard() {
         fallback={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-card border border-white/10 rounded-lg p-4 flex flex-col gap-3">
+              <div
+                key={i}
+                className="bg-card border border-white/10 rounded-lg p-4 flex flex-col gap-3"
+              >
                 <div className="h-4 w-1/2 rounded bg-white/10" />
                 <div className="h-3 w-1/3 rounded bg-white/5" />
               </div>
@@ -171,9 +174,22 @@ export default function Dashboard() {
         }
         fixture={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {[{ id: "1", name: "My Site", domain: "example.com", createdAt: new Date().toISOString(), isPublic: false, publicSlug: null }].map(project => (
+            {[
+              {
+                id: "1",
+                name: "My Site",
+                domain: "example.com",
+                createdAt: new Date().toISOString(),
+                isPublic: false,
+                publicSlug: null,
+              },
+            ].map(project => (
               <a href={`/dashboard/project/${project.id}`} key={project.id}>
-                <Card item={project} onDelete={handleDelete} onToggleVisibility={handleToggleVisibility} />
+                <Card
+                  item={project}
+                  onDelete={handleDelete}
+                  onToggleVisibility={handleToggleVisibility}
+                />
               </a>
             ))}
           </div>
