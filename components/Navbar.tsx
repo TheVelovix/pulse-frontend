@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "@/context/SessionContext";
 import logo from "@/images/pulse-logo.png";
+import { XIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
   const { user, loading, logout } = useSession();
@@ -123,14 +124,7 @@ export default function Navbar() {
             aria-label="Close menu"
             className="text-text-muted hover:text-foreground transition-colors cursor-pointer"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M4 4l12 12M16 4L4 16"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+            <XIcon size={20} />
           </button>
         </div>
 

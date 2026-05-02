@@ -7,6 +7,8 @@ import {
   Radio,
   MousePointerClick,
 } from "lucide-react";
+import DocsMobileNav from "@/components/DocsMobileNav";
+import { ShieldSlashIcon } from "@phosphor-icons/react/dist/ssr";
 
 const NAV = [
   { id: "introduction", label: "Introduction" },
@@ -16,6 +18,7 @@ const NAV = [
   { id: "analytics", label: "Analytics" },
   { id: "live-views", label: "Live Views" },
   { id: "custom-events", label: "Custom Events" },
+  { id: "adblocker-bypass", label: "Bypassing Ad Blockers" },
 ];
 
 function CodeBlock({ children }: { children: string }) {
@@ -102,6 +105,7 @@ function Endpoint({
 export default function DocsPage() {
   return (
     <div className="mx-auto max-w-7xl w-full px-6 py-10 flex gap-10">
+      <DocsMobileNav />
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col gap-1 w-52 shrink-0">
         <div className="sticky top-8">
@@ -520,10 +524,10 @@ pulse.track("404", { path: window.location.pathname });`}</CodeBlock>
             <CodeBlock>{`// pulse.d.ts
 interface PulseProps {
   [key: string]: string | number | boolean;
-
+}
 interface Pulse {
   track: (name: string, props?: PulseProps) => void;
-
+}
 declare global {
   interface Window {
     pulse: Pulse;
@@ -602,6 +606,94 @@ declare global {
               .
             </p>
           </div>
+        </section>
+
+        {/* Bypassing Ad Blockers */}
+        <section id="adblocker-bypass" className="flex flex-col gap-6 pb-10">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent shrink-0">
+              <ShieldSlashIcon size={18} />
+            </div>
+            <h2 className="text-xl font-bold">Bypassing Ad Blockers</h2>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            By default, the Pulse script is loaded from api.pulse.velovix.com
+            which some ad blockers may block. To ensure accurate data, you can
+            proxy the script through your own domain so it appears as a
+            first-party request.
+          </p>
+
+          {/* Next.js */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">Next.js</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Add the following to your{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
+                next.config.js
+              </code>{" "}
+              or{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
+                next.config.ts
+              </code>
+              :
+            </p>
+            <CodeBlock>{`async rewrites() {
+  return [
+    {
+      source: '/pp/script.js',
+      destination: 'https://api.pulse.velovix.com/viewsTracker.js',
+    },
+    {
+      source: '/pp/track',
+      destination: 'https://api.pulse.velovix.com/api/track',
+    },
+  ]
+}`}</CodeBlock>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Then update your script tag to load from your own domain:
+          </p>
+          <CodeBlock>{`<script defer src="/pp/script.js" data-project-id="YOUR_PROJECT_ID"></script>`}</CodeBlock>
+
+          {/* Nginx */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">Nginx</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Add the following to your Nginx server block:
+            </p>
+            <CodeBlock>{`location = /pp/script.js {
+    proxy_pass https://api.pulse.velovix.com/viewsTracker.js;
+    proxy_set_header Host api.pulse.velovix.com;
+}
+
+location = /pp/track {
+    proxy_pass https://api.pulse.velovix.com/api/track;
+    proxy_set_header Host api.pulse.velovix.com;
+}`}</CodeBlock>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Then update your script tag to load from your own domain:
+          </p>
+          <CodeBlock>{`<script defer src="/pp/script.js" data-project-id="YOUR_PROJECT_ID"></script>`}</CodeBlock>
+
+          {/* Caddy */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold">Caddy</p>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Add the following to your Caddyfile:
+            </p>
+            <CodeBlock>{`handle /pp/script.js {
+    reverse_proxy https://api.pulse.velovix.com/viewsTracker.js
+}
+
+handle /pp/track {
+    reverse_proxy https://api.pulse.velovix.com/api/track
+}`}</CodeBlock>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Then update your script tag to load from your own domain:
+          </p>
+          <CodeBlock>{`<script defer src="/pp/script.js" data-project-id="YOUR_PROJECT_ID"></script>`}</CodeBlock>
         </section>
       </div>
     </div>

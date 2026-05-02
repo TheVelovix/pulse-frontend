@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
@@ -17,8 +17,6 @@ const DATE_RANGES = [
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
-  const searchParams = useSearchParams();
-  const searchConsoleConnected = searchParams.get("search-console");
   const [days, setDays] = useState<number | undefined>(30);
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
@@ -27,6 +25,7 @@ export default function ProjectPage() {
   const [searchConsoleData, setSearchConsoleData] = useState<
     GoogleSearchConsoleData[]
   >([]);
+  const [searchConsoleConnected, setSearchConsoleConnected] = useState(false);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const session = useSession();
   useEffect(() => {
@@ -48,35 +47,20 @@ export default function ProjectPage() {
           );
           return [];
         }
+        if (res.status === 404) {
+          res.text().then(text => {
+            if (text === "search-console-not-connected")
+              setSearchConsoleConnected(false);
+          });
+          return [];
+        }
         return res.json();
       })
       .then((data: GoogleSearchConsoleData[]) => {
-        console.log(data);
         setSearchConsoleData(data);
+        setSearchConsoleConnected(true);
       });
   }, [id]);
-  useEffect(() => {
-    if (searchConsoleConnected && searchConsoleConnected === "connected") {
-      fetch(`/api/search-console/${id}`, { credentials: "include" })
-        .then(res => {
-          if (res.status == 403) {
-            toast.error("Domain not verified on Google Search Console");
-            return [];
-          }
-          if (res.status === 500) {
-            toast.error(
-              "Failed to get search console data. Please report at: info@velovix.com",
-            );
-            return [];
-          }
-          return res.json();
-        })
-        .then((data: GoogleSearchConsoleData[]) => {
-          console.log(data);
-          setSearchConsoleData(data);
-        });
-    }
-  }, [searchConsoleConnected]);
   async function exportCsv() {
     const params = new URLSearchParams();
     if (customFrom && customTo) {
@@ -212,16 +196,16 @@ export default function ProjectPage() {
             <p>Export CSV</p>
           </button>
         )}
-        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && (
-          <a
-            // onClick={() => exportCsv()}
-            className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
-            target="_blank"
-            href={`/api/search-console/connect/${id}`}
-          >
-            <p>Connect Google Search Console</p>
-          </a>
-        )}
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO &&
+          !searchConsoleConnected && (
+            <a
+              className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
+              target="_blank"
+              href={`/api/search-console/connect/${id}`}
+            >
+              <p>Connect Google Search Console</p>
+            </a>
+          )}
       </div>
       <ScriptModal
         projectId={id}
