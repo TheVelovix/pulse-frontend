@@ -66,7 +66,7 @@ export default function PricingPage() {
                 Pro
               </p>
               <span className="text-xs font-semibold rounded-full bg-accent/15 text-accent px-3 py-1">
-                Most popular
+                Best Value
               </span>
             </div>
 

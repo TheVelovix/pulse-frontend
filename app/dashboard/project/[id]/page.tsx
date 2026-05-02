@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
@@ -8,6 +8,7 @@ import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { toast } from "sonner";
 import ProjectAnalytics from "@/components/ProjectAnalytics";
 import { CopyIcon } from "@phosphor-icons/react/dist/ssr";
+import GaImportModal from "@/components/GaImportModal";
 
 const DATE_RANGES = [
   { label: "7d", value: 7 },
@@ -17,6 +18,7 @@ const DATE_RANGES = [
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const [days, setDays] = useState<number | undefined>(30);
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
@@ -35,16 +37,19 @@ export default function ProjectPage() {
         const found = data.find(p => p.id === id);
         setProject(found ?? null);
       });
+    const searchConsoleParam = searchParams.get("search-console");
     fetch(`/api/search-console/${id}`, { credentials: "include" })
       .then(res => {
         if (res.status == 403) {
-          toast.error("Domain not verified on Google Search Console");
+          if (searchConsoleParam && searchConsoleParam === "connected")
+            toast.error("Domain not verified on Google Search Console");
           return [];
         }
         if (res.status === 500) {
-          toast.error(
-            "Failed to get search console data. Please report at: info@velovix.com",
-          );
+          if (searchConsoleParam && searchConsoleParam === "connected")
+            toast.error(
+              "Failed to get search console data. Please report at: info@velovix.com",
+            );
           return [];
         }
         if (res.status === 404) {
@@ -212,6 +217,7 @@ export default function ProjectPage() {
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
+      <GaImportModal projectId={id} />
       {analytics && (
         <ProjectAnalytics
           analytics={analytics}
