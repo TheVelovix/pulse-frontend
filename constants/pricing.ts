@@ -21,9 +21,10 @@ export const PRO_FEATURES = [
   "Weekly email reports",
   "Real-time visitor count",
   "Custom events & revenue tracking",
-  "Remove Pulse branding",
+  "Remove Velovix branding",
   "Developer API access",
   "Time on page tracking",
   "UTM campaign tracking",
   "Public dashboard",
+  "Google Search Console Integration",
 ];
