@@ -20,7 +20,6 @@ export default function PricingButton({
 }: Props) {
   const router = useRouter();
   const session = useSession();
-
   async function handleClick() {
     if (plan === "free" && session.user) {
       toast.error("You are already signed up.");

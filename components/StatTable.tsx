@@ -10,7 +10,7 @@ export default function StatTable<
   columns: { key: keyof T; label: string }[];
 }) {
   return (
-    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-auto">
+    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-auto max-h-125">
       <h2 className="text-sm font-medium text-text-muted mb-4">{title}</h2>
       {items.length === 0 ? (
         <p className="text-text-muted text-xs">No data</p>
