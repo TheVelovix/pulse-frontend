@@ -9,9 +9,15 @@ type Props = {
   plan: "free" | "pro";
   label: string;
   variant: "primary" | "secondary";
+  isAnnual?: boolean;
 };
 
-export default function PricingButton({ plan, label, variant }: Props) {
+export default function PricingButton({
+  plan,
+  label,
+  variant,
+  isAnnual,
+}: Props) {
   const router = useRouter();
   const session = useSession();
 
@@ -21,9 +27,12 @@ export default function PricingButton({ plan, label, variant }: Props) {
     } else if (plan === "free" && !session.user) {
       router.push("/signup");
     } else if (plan === "pro" && session.user) {
-      const res = await fetchWithAuth(`/api/checkout/subscribe`, {
-        method: "POST",
-      });
+      const res = await fetchWithAuth(
+        `/api/checkout/subscribe?annual=${isAnnual ?? false}`,
+        {
+          method: "POST",
+        },
+      );
       if (!res.ok) {
         const text = await res.text();
         if (text === "already subscribed") {
@@ -42,7 +51,7 @@ export default function PricingButton({ plan, label, variant }: Props) {
         },
       });
     } else {
-      router.push("/signup?plan=pro");
+      router.push(`/signup?plan=pro${isAnnual ? "&billing=annual" : ""}`);
     }
   }
 

@@ -1,3 +1,5 @@
+import { flag, name } from "country-emoji";
+
 export default function StatList({
   title,
   items,
@@ -7,7 +9,7 @@ export default function StatList({
 }) {
   const total = items.reduce((sum, item) => sum + item.count, 0);
   return (
-    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-auto">
+    <div className="bg-card border border-white/10 rounded-lg p-5 overflow-x-auto max-h-125">
       <h2 className="text-sm font-medium text-text-muted mb-4">{title}</h2>
       {items.length === 0 ? (
         <p className="text-text-muted text-xs">No data</p>
@@ -21,7 +23,9 @@ export default function StatList({
                   style={{ width: `${(item.count / total) * 100}%` }}
                 />
                 <span className="relative px-2 py-0.5 truncate block">
-                  {item.label}
+                  {title === "Countries"
+                    ? `${flag(item.label)} ${name(item.label)}`
+                    : item.label}
                 </span>
               </div>
               <span className="text-text-muted shrink-0">{item.count}</span>

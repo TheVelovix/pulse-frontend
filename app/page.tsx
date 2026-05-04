@@ -7,13 +7,11 @@ import {
   Globe,
   Layers,
   Wrench,
-  Check,
   type LucideIcon,
 } from "lucide-react";
 import { Metadata } from "next";
-import PricingButton from "@/components/PricingButton";
 import dashboard from "@/images/dashboard.png";
-import { FREE_FEATURES, PRO_FEATURES } from "@/constants/pricing";
+import SubscriptionPlans from "@/components/SubscriptionPlans";
 
 export const metadata: Metadata = {
   title: "Pulse — Privacy-Friendly Website Analytics",
@@ -177,84 +175,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section className="px-6 py-20 md:py-28 border-t border-white/5">
-        <div className="mx-auto max-w-4xl">
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-accent mb-3">
-            Pricing
-          </p>
-          <h2 className="text-center text-2xl font-bold sm:text-3xl mb-3">
-            Simple, transparent pricing
-          </h2>
-          <p className="text-center text-sm text-text-muted mb-14">
-            Start free, upgrade when you need more. No hidden fees.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Free */}
-            <div className="rounded-xl border border-white/10 bg-card p-8 flex flex-col gap-6">
-              <div>
-                <h3 className="text-sm font-semibold text-text-muted uppercase tracking-widest mb-3">
-                  Free
-                </h3>
-                <div className="flex items-end gap-1">
-                  <span className="text-4xl font-bold">€0</span>
-                  <span className="text-text-muted text-sm mb-1">
-                    / forever
-                  </span>
-                </div>
-              </div>
-              <ul className="flex flex-col gap-3">
-                {FREE_FEATURES.map(f => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-2.5 text-sm text-text-muted"
-                  >
-                    <Check size={14} className="text-accent shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <PricingButton
-                plan="free"
-                label="Get started free"
-                variant="secondary"
-              />
-            </div>
-
-            {/* Pro */}
-            <div className="rounded-xl border border-accent/30 bg-accent/5 p-8 flex flex-col gap-6 relative">
-              <span className="absolute top-4 right-4 text-xs font-semibold bg-accent text-white px-2.5 py-1 rounded-full">
-                Best Value
-              </span>
-              <div>
-                <h3 className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
-                  Pro
-                </h3>
-                <div className="flex items-end gap-1">
-                  <span className="text-4xl font-bold">€7</span>
-                  <span className="text-text-muted text-sm mb-1">/ month</span>
-                </div>
-              </div>
-              <ul className="flex flex-col gap-3">
-                {PRO_FEATURES.map(f => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-2.5 text-sm text-text-muted"
-                  >
-                    <Check size={14} className="text-accent shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <PricingButton
-                plan="pro"
-                label="Get started with Pro"
-                variant="primary"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <SubscriptionPlans />
 
       {/* How it works */}
       <section className="px-6 py-20 md:py-28 border-t border-white/5">
