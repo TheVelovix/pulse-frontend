@@ -9,7 +9,7 @@ export default function SubscriptionPlans() {
     <section className="px-6 pb-28">
       <div className="mx-auto max-w-4xl grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Free plan */}
-        <div className="flex flex-col rounded-2xl border border-white/10 bg-card p-8">
+        <div className="flex flex-col rounded-2xl border border-white/10 bg-card py-8 px-6">
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted mb-4">
             Free
           </p>
@@ -33,7 +33,7 @@ export default function SubscriptionPlans() {
         </div>
 
         {/* Pro plan */}
-        <div className="relative flex flex-col rounded-2xl border border-accent/40 bg-card p-8 overflow-hidden">
+        <div className="relative flex flex-col rounded-2xl border border-accent/40 bg-card py-8 px-6 overflow-hidden">
           <div
             aria-hidden
             className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-accent/10 blur-[60px]"

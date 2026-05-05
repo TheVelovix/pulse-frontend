@@ -12,7 +12,7 @@ export default function BillingToggle() {
   return (
     <>
       {/* Toggle */}
-      <div className="flex items-center justify-center gap-3 mb-10">
+      <div className="flex items-center justify-center gap-3 mb-10 ">
         <span
           className={`text-sm font-medium transition-colors ${!isAnnual ? "text-white" : "text-text-muted"}`}
         >
@@ -37,7 +37,7 @@ export default function BillingToggle() {
           >
             Annually
           </span>
-          <span className="text-xs font-semibold rounded-full bg-accent/15 text-accent px-2 py-0.5">
+          <span className="text-xs text-center font-semibold rounded-full bg-accent/15 text-accent px-2 py-0.5">
             2 months free
           </span>
         </div>
