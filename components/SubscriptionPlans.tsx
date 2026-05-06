@@ -1,4 +1,3 @@
-// SubscriptionPlans.tsx (server component, no "use client")
 import { FREE_FEATURES, PRO_FEATURES } from "@/constants/pricing";
 import BillingToggle from "./BillingToggle";
 import { CheckIcon } from "@phosphor-icons/react/dist/ssr";

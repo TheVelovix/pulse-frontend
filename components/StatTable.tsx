@@ -33,7 +33,8 @@ export default function StatTable<
               <tr key={i} className="border-b border-white/5 last:border-0">
                 {columns.map(col => (
                   <td key={String(col.key)} className="py-2 pr-4 text-sm">
-                    {String(item[col.key] ?? "-")}
+                    {col.key !== "Is Spider" && String(item[col.key] ?? "-")}
+                    {col.key === "Is Spider" && (item[col.key] ? "Yes" : "No")}
                   </td>
                 ))}
               </tr>
