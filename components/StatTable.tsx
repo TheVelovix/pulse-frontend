@@ -31,12 +31,14 @@ export default function StatTable<
           <tbody>
             {items.map((item, i) => (
               <tr key={i} className="border-b border-white/5 last:border-0">
-                {columns.map(col => (
-                  <td key={String(col.key)} className="py-2 pr-4 text-sm">
-                    {col.key !== "Is Spider" && String(item[col.key] ?? "-")}
-                    {col.key === "Is Spider" && (item[col.key] ? "Yes" : "No")}
-                  </td>
-                ))}
+                {columns.map(col => {
+                  return (
+                    <td key={String(col.key)} className="py-2 pr-4 text-sm">
+                      {col.key !== "isSpider" && String(item[col.key] ?? "-")}
+                      {col.key === "isSpider" && (item[col.key] ? "Yes" : "No")}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
