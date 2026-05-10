@@ -34,11 +34,6 @@ function SignupForm() {
     password: "",
     confirmPassword: "",
   });
-  const [agreed, setAgreed] = useState({
-    terms: false,
-    privacy: false,
-    refund: false,
-  });
   const [error, setError] = useState("");
   async function signup(e: React.SubmitEvent) {
     e.preventDefault();
@@ -135,6 +130,7 @@ function SignupForm() {
           Password
         </label>
         <input
+          id="password-input"
           type="password"
           value={credentials.password}
           onChange={e => {
@@ -161,65 +157,6 @@ function SignupForm() {
           required
         />
       </div>
-      <div className="flex flex-col gap-3 mt-5">
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreed.terms}
-            onChange={e => setAgreed({ ...agreed, terms: e.target.checked })}
-            className="mt-0.5 accent-accent cursor-pointer"
-            required
-          />
-          <span className="text-sm text-text-muted leading-snug">
-            I agree to the{" "}
-            <Link
-              href="/legal/terms"
-              target="_blank"
-              className="text-accent hover:text-accent-hover transition-colors duration-200"
-            >
-              Terms of Service
-            </Link>
-          </span>
-        </label>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreed.privacy}
-            onChange={e => setAgreed({ ...agreed, privacy: e.target.checked })}
-            className="mt-0.5 accent-accent cursor-pointer"
-            required
-          />
-          <span className="text-sm text-text-muted leading-snug">
-            I agree to the{" "}
-            <Link
-              href="/legal/privacy"
-              target="_blank"
-              className="text-accent hover:text-accent-hover transition-colors duration-200"
-            >
-              Privacy Policy
-            </Link>
-          </span>
-        </label>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreed.refund}
-            onChange={e => setAgreed({ ...agreed, refund: e.target.checked })}
-            className="mt-0.5 accent-accent cursor-pointer"
-            required
-          />
-          <span className="text-sm text-text-muted leading-snug">
-            I have read the{" "}
-            <Link
-              href="/legal/refund"
-              target="_blank"
-              className="text-accent hover:text-accent-hover transition-colors duration-200"
-            >
-              Refund Policy
-            </Link>
-          </span>
-        </label>
-      </div>
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
@@ -236,7 +173,20 @@ function SignupForm() {
       >
         Create Account
       </button>
-
+      <p className="mt-6 text-sm  text-gray-300">
+        By continuing you agree to our{" "}
+        <Link href="/legal/terms" target="_blank" className="underline">
+          Terms of service
+        </Link>
+        ,{" "}
+        <Link href="/legal/privacy" target="_blank" className="underline">
+          Privacy policy
+        </Link>{" "}
+        and{" "}
+        <Link href="/legal/refund" target="_blank" className="underline">
+          Refund policy
+        </Link>
+      </p>
       <hr className="mt-8" />
       <p className="text-center text-sm mt-4">
         Already have an account?{" "}
