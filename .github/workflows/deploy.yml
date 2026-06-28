@@ -9,13 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
       - name: Write env
         run: |
           echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" > .env.local
@@ -23,15 +16,32 @@ jobs:
           echo "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}" >> .env.local
           echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}" >> .env.local
 
+      - name: Fix permissions
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: sudo chown -R $USER:$USER /var/www/pulse-frontend
+
       - name: Copy files
-        run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/id_ed25519" ./ root@${{ secrets.VPS_HOST }}:/var/www/pulse-frontend/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "./"
+          target: /var/www/pulse-frontend
+          overwrite: true
 
       - name: Build and restart
-        run: |
-          ssh -i ~/.ssh/id_ed25519 root@${{ secrets.VPS_HOST }} "
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
             cd /var/www/pulse-frontend &&
             /root/.bun/bin/bun install &&
             /root/.bun/bin/bun run build &&
-            systemctl restart pulse-frontend
-          "
+            sudo systemctl restart pulse-frontend
