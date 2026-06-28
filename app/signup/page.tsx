@@ -15,6 +15,12 @@ export default function SignupPage() {
     </Suspense>
   );
 }
+type SignUpCredentials = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  promotionalCode?: string;
+};
 
 function SignupForm() {
   const session = useSession();
@@ -29,10 +35,11 @@ function SignupForm() {
     }
   }, [session.loading, router, session.user]);
 
-  const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState<SignUpCredentials>({
     email: "",
     password: "",
     confirmPassword: "",
+    promotionalCode: undefined,
   });
   const [error, setError] = useState("");
   async function signup(e: React.SubmitEvent) {
@@ -60,6 +67,9 @@ function SignupForm() {
           case "captcha-failed":
             setError("CAPTCHA verification failed. Please try again.");
             break;
+          case "invalid-promotional-code":
+            setError("Invalid Promotional Code");
+            break;
           default:
             setError("Unknown error occurred.");
         }
@@ -75,7 +85,9 @@ function SignupForm() {
     } else {
       toast("Account created successfully!");
       await session.refetch();
-      if (isPro) {
+      // If the user accidentally navigated to the page with the isPro param
+      // but also entered a valid promotional code don't open the checkout page
+      if (isPro && !credentials.promotionalCode) {
         const checkoutRes = await fetchWithAuth(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/checkout/subscribe`,
           { method: "POST" },
@@ -152,6 +164,22 @@ function SignupForm() {
           onChange={e => {
             setError("");
             setCredentials({ ...credentials, confirmPassword: e.target.value });
+          }}
+          className="w-full border border-white rounded-lg p-2 text-sm transition-colors duration-200 focus:outline-none focus:border-accent"
+          required
+        />
+      </div>
+      <div className="my-5 flex flex-col gap-2">
+        <label htmlFor="confirm-password-input" className="text-sm font-medium">
+          Promotional Code (Optional)
+        </label>
+        <input
+          id="confirm-password-input"
+          type="password"
+          value={credentials.promotionalCode}
+          onChange={e => {
+            setError("");
+            setCredentials({ ...credentials, promotionalCode: e.target.value });
           }}
           className="w-full border border-white rounded-lg p-2 text-sm transition-colors duration-200 focus:outline-none focus:border-accent"
           required

@@ -7,7 +7,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
 import { Skeleton } from "boneyard-js/react";
 
-const emptyForm = { name: "", domain: "" };
 const ANIM_DURATION = 200;
 async function getProjects(controller: AbortController): Promise<Project[]> {
   try {
@@ -48,7 +47,7 @@ export default function Dashboard() {
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState({ name: "", domain: "" });
   const [error, setError] = useState("");
   const { user } = useSession();
   const router = useRouter();
@@ -70,6 +69,7 @@ export default function Dashboard() {
 
   function closeForm() {
     setFormVisible(false);
+    setForm({ name: "", domain: "" });
     setTimeout(() => setShowForm(false), ANIM_DURATION);
   }
 

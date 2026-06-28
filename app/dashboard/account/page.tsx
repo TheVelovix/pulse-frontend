@@ -15,6 +15,7 @@ import {
   Copy,
   Eye,
   EyeOff,
+  Ticket,
 } from "lucide-react";
 
 export default function AccountPage() {
@@ -25,6 +26,10 @@ export default function AccountPage() {
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [cancellingSubscription, setCancellingSubscription] = useState(false);
   const [deleteEmailInput, setDeleteEmailInput] = useState("");
+  const [showPromoModal, setShowPromoModal] = useState(false);
+  const [promoModalVisible, setPromoModalVisible] = useState(false);
+  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [activatingPromoCode, setActivatingPromoCode] = useState(false);
 
   const isPro = user?.subscriptionPlan === SubscriptionPlan.PRO;
 
@@ -120,7 +125,12 @@ export default function AccountPage() {
     setCancellingSubscription(false);
     if (!res.ok) {
       if (res.status === 400) {
-        toast.error("You don't have an active subscription.");
+        const text = await res.text();
+        if (text === "cannot-cancel-bundled-subscription") {
+          toast.error(
+            "You can't cancel a subscription that was activated with a promo code",
+          );
+        } else toast.error("You don't have an active subscription.");
       } else if (res.status === 500) {
         toast.error("Failed to cancel subscription. Please try again.");
       } else {
@@ -141,6 +151,42 @@ export default function AccountPage() {
     setDeleteVisible(false);
     setDeleteEmailInput("");
     setTimeout(() => setShowDeleteConfirm(false), 200);
+  }
+
+  function openPromoModal() {
+    setShowPromoModal(true);
+    requestAnimationFrame(() => setPromoModalVisible(true));
+  }
+
+  function closePromoModal() {
+    setPromoModalVisible(false);
+    setPromoCodeInput("");
+    setTimeout(() => setShowPromoModal(false), 200);
+  }
+
+  async function handleActivatePromoCode() {
+    const code = promoCodeInput.trim();
+    if (!code) return;
+    setActivatingPromoCode(true);
+    const res = await fetchWithAuth(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/checkout/activateCode?promoCode=${encodeURIComponent(code)}`,
+      { method: "POST" },
+    );
+    setActivatingPromoCode(false);
+    if (!res.ok) {
+      const text = await res.text();
+      if (text === "invalid-code") {
+        toast.error("That promo code is invalid or already used.");
+      } else if (text === "already-subscribed") {
+        toast.error("You already have an active subscription.");
+      } else {
+        toast.error("Failed to activate promo code. Please try again.");
+      }
+      return;
+    }
+    await refetch();
+    toast.success("Promo code activated!");
+    closePromoModal();
   }
 
   async function handleDeleteAccount() {
@@ -214,12 +260,20 @@ export default function AccountPage() {
                 {cancellingSubscription ? "Cancelling…" : "Cancel subscription"}
               </button>
             ) : (
-              <button
-                onClick={handleUpgrade}
-                className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer"
-              >
-                Upgrade to Pro
-              </button>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleUpgrade}
+                  className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer"
+                >
+                  Upgrade to Pro
+                </button>
+                <button
+                  onClick={openPromoModal}
+                  className="text-sm font-semibold bg-background hover:bg-card px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer"
+                >
+                  Activate Promo Code
+                </button>
+              </div>
             )}
           </div>
 
@@ -397,6 +451,67 @@ export default function AccountPage() {
             >
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Activate promo code modal */}
+      {showPromoModal && (
+        <div
+          className={`fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200 ${promoModalVisible ? "opacity-100" : "opacity-0"}`}
+          onClick={closePromoModal}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className={`bg-card border border-white/10 rounded-xl p-6 w-full max-w-md flex flex-col gap-5 transition-all duration-200 ${promoModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                <Ticket size={18} />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold">
+                  Activate promo code
+                </h2>
+                <p className="text-sm text-text-muted mt-1">
+                  Enter your promo code below to activate Pro access.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-text-muted">Promo code</label>
+              <input
+                type="text"
+                value={promoCodeInput}
+                onChange={e => setPromoCodeInput(e.target.value)}
+                onKeyDown={e =>
+                  e.key === "Enter" && handleActivatePromoCode()
+                }
+                placeholder="e.g. WELCOME2026"
+                autoFocus
+                className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200"
+              />
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={closePromoModal}
+                disabled={activatingPromoCode}
+                className="text-sm text-text-muted hover:text-foreground transition-colors duration-200 cursor-pointer px-4 py-2 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleActivatePromoCode}
+                disabled={activatingPromoCode || !promoCodeInput.trim()}
+                className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {activatingPromoCode ? "Activating…" : "Activate"}
+              </button>
+            </div>
           </div>
         </div>
       )}
