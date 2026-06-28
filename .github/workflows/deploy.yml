@@ -16,14 +16,13 @@ jobs:
           script: |
             git config --global --add safe.directory /var/www/pulse-frontend
             cd /var/www/pulse-frontend
-            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/TheVelovix/pulse-frontend.git
-            git pull origin main
+            git -c credential.helper= pull https://${{ secrets.GH_TOKEN }}@github.com/TheVelovix/pulse-frontend.git main
             cat > .env.local << EOF
             BACKEND_URL=${{ secrets.BACKEND_URL }}
             NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }}
             NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}
             NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}
             EOF
-            /root/.bun/bin/bun install
-            /root/.bun/bin/bun run build
+            sudo /root/.bun/bin/bun install
+            sudo /root/.bun/bin/bun run build
             sudo systemctl restart pulse-frontend
