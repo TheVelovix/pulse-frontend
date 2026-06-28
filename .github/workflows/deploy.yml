@@ -7,22 +7,40 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
+      - uses: actions/checkout@v4
+
+      - name: Write env
+        run: |
+          echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" > .env.local
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env.local
+          echo "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}" >> .env.local
+          echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}" >> .env.local
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install and build
+        run: |
+          bun install
+          bun run build
+
+      - name: Copy build to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: ".next,public,package.json,bun.lock,.env.local"
+          target: /var/www/pulse-frontend
+          overwrite: true
+
+      - name: Install production deps and restart
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            git config --global --add safe.directory /var/www/pulse-frontend
             cd /var/www/pulse-frontend
-            git -c credential.helper= pull https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TheVelovix/pulse-frontend.git main
-            cat > .env.local << EOF
-            BACKEND_URL=${{ secrets.BACKEND_URL }}
-            NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }}
-            NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=${{ secrets.PADDLE_CLIENT_TOKEN }}
-            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.TURNSTILE_SITE_KEY }}
-            EOF
-            /home/ubuntu/.bun/bin/bun install
-            /home/ubuntu/.bun/bin/bun run build
+            /home/ubuntu/.bun/bin/bun install --production
             sudo systemctl restart pulse-frontend
