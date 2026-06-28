@@ -25,6 +25,7 @@ jobs:
           source: "./"
           target: /var/www/pulse-frontend
           overwrite: true
+          exclude: "node_modules,.next,.git"
 
       - name: Build and restart
         uses: appleboy/ssh-action@v1.0.3
