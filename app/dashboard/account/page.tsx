@@ -16,6 +16,7 @@ import {
   Eye,
   EyeOff,
   Ticket,
+  Mail,
 } from "lucide-react";
 
 export default function AccountPage() {
@@ -30,6 +31,16 @@ export default function AccountPage() {
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState("");
   const [activatingPromoCode, setActivatingPromoCode] = useState(false);
+
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [emailChangeStep, setEmailChangeStep] = useState<"email" | "code">(
+    "email",
+  );
+  const [newEmailInput, setNewEmailInput] = useState("");
+  const [emailCodeInput, setEmailCodeInput] = useState("");
+  const [requestingEmailChange, setRequestingEmailChange] = useState(false);
+  const [confirmingEmailChange, setConfirmingEmailChange] = useState(false);
 
   const isPro = user?.subscriptionPlan === SubscriptionPlan.PRO;
 
@@ -189,6 +200,74 @@ export default function AccountPage() {
     closePromoModal();
   }
 
+  function openEmailModal() {
+    setEmailChangeStep("email");
+    setNewEmailInput("");
+    setEmailCodeInput("");
+    setShowEmailModal(true);
+    requestAnimationFrame(() => setEmailModalVisible(true));
+  }
+
+  function closeEmailModal() {
+    setEmailModalVisible(false);
+    setTimeout(() => {
+      setShowEmailModal(false);
+      setEmailChangeStep("email");
+      setNewEmailInput("");
+      setEmailCodeInput("");
+    }, 200);
+  }
+
+  async function handleRequestEmailChange() {
+    const email = newEmailInput.trim();
+    if (!email) return;
+    setRequestingEmailChange(true);
+    const res = await fetchWithAuth(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/requestEmailChange`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      },
+    );
+    setRequestingEmailChange(false);
+    if (!res.ok) {
+      const text = await res.text();
+      if (text === "email-in-use") {
+        toast.error("That email address is already in use.");
+      } else {
+        toast.error("Failed to send verification code. Please try again.");
+      }
+      return;
+    }
+    setEmailChangeStep("code");
+  }
+
+  async function handleConfirmEmailChange() {
+    const code = emailCodeInput.trim();
+    if (!code) return;
+    setConfirmingEmailChange(true);
+    const res = await fetchWithAuth(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/confirmEmailChange?code=${encodeURIComponent(code)}`,
+      { method: "PATCH" },
+    );
+    setConfirmingEmailChange(false);
+    if (!res.ok) {
+      const text = await res.text();
+      if (text === "code-expired") {
+        toast.error("That code has expired. Please request a new one.");
+        setEmailChangeStep("email");
+        setEmailCodeInput("");
+      } else {
+        toast.error("Invalid verification code.");
+      }
+      return;
+    }
+    await refetch();
+    toast.success("Email updated successfully!");
+    closeEmailModal();
+  }
+
   async function handleDeleteAccount() {
     setDeletingAccount(true);
     const res = await fetchWithAuth(
@@ -220,9 +299,17 @@ export default function AccountPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-text-muted">
             Profile
           </h2>
-          <div className="flex flex-col gap-1">
-            <p className="text-xs text-text-muted">Email</p>
-            <p className="text-sm font-medium">{user?.email}</p>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-text-muted">Email</p>
+              <p className="text-sm font-medium">{user?.email}</p>
+            </div>
+            <button
+              onClick={openEmailModal}
+              className="text-sm font-medium text-text-muted hover:text-foreground border border-white/10 hover:border-white/20 px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
+            >
+              Change email
+            </button>
           </div>
         </section>
 
@@ -245,7 +332,7 @@ export default function AccountPage() {
                 </p>
                 <p className="text-xs text-text-muted">
                   {isPro
-                    ? "Unlimited projects · 12 months retention"
+                    ? "Unlimited projects · 24 months retention"
                     : "5 projects · 30 days retention"}
                 </p>
               </div>
@@ -455,6 +542,116 @@ export default function AccountPage() {
         </div>
       )}
 
+      {/* Change email modal */}
+      {showEmailModal && (
+        <div
+          className={`fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200 ${emailModalVisible ? "opacity-100" : "opacity-0"}`}
+          onClick={closeEmailModal}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className={`bg-card border border-white/10 rounded-xl p-6 w-full max-w-md flex flex-col gap-5 transition-all duration-200 ${emailModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                <Mail size={18} />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold">
+                  {emailChangeStep === "email"
+                    ? "Change email"
+                    : "Verify your new email"}
+                </h2>
+                <p className="text-sm text-text-muted mt-1">
+                  {emailChangeStep === "email"
+                    ? "Enter your new email address. We'll send you a verification code."
+                    : `Enter the 6-character code sent to ${newEmailInput.trim()}.`}
+                </p>
+              </div>
+            </div>
+
+            {emailChangeStep === "email" ? (
+              <div className="flex flex-col gap-2">
+                <label className="text-xs text-text-muted">
+                  New email address
+                </label>
+                <input
+                  type="email"
+                  value={newEmailInput}
+                  onChange={e => setNewEmailInput(e.target.value)}
+                  onKeyDown={e =>
+                    e.key === "Enter" && handleRequestEmailChange()
+                  }
+                  placeholder="you@example.com"
+                  autoFocus
+                  className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200"
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <label className="text-xs text-text-muted">
+                  Verification code
+                </label>
+                <input
+                  type="text"
+                  value={emailCodeInput}
+                  onChange={e => setEmailCodeInput(e.target.value)}
+                  onKeyDown={e =>
+                    e.key === "Enter" && handleConfirmEmailChange()
+                  }
+                  placeholder="XXXXXX"
+                  maxLength={6}
+                  autoFocus
+                  className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200 tracking-widest font-mono uppercase"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmailChangeStep("email");
+                    setEmailCodeInput("");
+                  }}
+                  className="text-xs text-text-muted hover:text-foreground transition-colors duration-200 self-start"
+                >
+                  Use a different email
+                </button>
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={closeEmailModal}
+                disabled={requestingEmailChange || confirmingEmailChange}
+                className="text-sm text-text-muted hover:text-foreground transition-colors duration-200 cursor-pointer px-4 py-2 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              {emailChangeStep === "email" ? (
+                <button
+                  type="button"
+                  onClick={handleRequestEmailChange}
+                  disabled={requestingEmailChange || !newEmailInput.trim()}
+                  className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {requestingEmailChange ? "Sending…" : "Send code"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleConfirmEmailChange}
+                  disabled={
+                    confirmingEmailChange || emailCodeInput.trim().length < 6
+                  }
+                  className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {confirmingEmailChange ? "Confirming…" : "Confirm"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Activate promo code modal */}
       {showPromoModal && (
         <div
@@ -470,9 +667,7 @@ export default function AccountPage() {
                 <Ticket size={18} />
               </div>
               <div>
-                <h2 className="text-base font-semibold">
-                  Activate promo code
-                </h2>
+                <h2 className="text-base font-semibold">Activate promo code</h2>
                 <p className="text-sm text-text-muted mt-1">
                   Enter your promo code below to activate Pro access.
                 </p>
@@ -485,9 +680,7 @@ export default function AccountPage() {
                 type="text"
                 value={promoCodeInput}
                 onChange={e => setPromoCodeInput(e.target.value)}
-                onKeyDown={e =>
-                  e.key === "Enter" && handleActivatePromoCode()
-                }
+                onKeyDown={e => e.key === "Enter" && handleActivatePromoCode()}
                 placeholder="e.g. WELCOME2026"
                 autoFocus
                 className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200"
