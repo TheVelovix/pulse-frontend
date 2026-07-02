@@ -17,6 +17,7 @@ import {
   EyeOff,
   Ticket,
   Mail,
+  Lock,
 } from "lucide-react";
 
 export default function AccountPage() {
@@ -41,6 +42,18 @@ export default function AccountPage() {
   const [emailCodeInput, setEmailCodeInput] = useState("");
   const [requestingEmailChange, setRequestingEmailChange] = useState(false);
   const [confirmingEmailChange, setConfirmingEmailChange] = useState(false);
+  const [loggingOutOtherDevices, setLoggingOutOtherDevices] = useState(false);
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [passwordStep, setPasswordStep] = useState<"sending" | "code">(
+    "sending",
+  );
+  const [passwordCode, setPasswordCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const isPro = user?.subscriptionPlan === SubscriptionPlan.PRO;
 
@@ -268,6 +281,76 @@ export default function AccountPage() {
     closeEmailModal();
   }
 
+  async function openPasswordModal() {
+    setPasswordStep("sending");
+    setPasswordCode("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordError("");
+    setShowPasswordModal(true);
+    requestAnimationFrame(() => setPasswordModalVisible(true));
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password?email=${encodeURIComponent(user?.email ?? "")}`,
+      { method: "POST" },
+    );
+    console.log(res);
+    if (!res.ok) {
+      setPasswordError("Failed to send code. Please try again.");
+      return;
+    }
+    setPasswordStep("code");
+  }
+
+  function closePasswordModal() {
+    setPasswordModalVisible(false);
+    setTimeout(() => {
+      setShowPasswordModal(false);
+      setPasswordStep("sending");
+      setPasswordCode("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordError("");
+    }, 200);
+  }
+
+  async function handleChangePassword() {
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    setChangingPassword(true);
+    setPasswordError("");
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: passwordCode, newPassword }),
+      },
+    );
+    setChangingPassword(false);
+    if (!res.ok) {
+      setPasswordError("Invalid or expired code. Please request a new one.");
+      return;
+    }
+    toast.success("Password changed successfully!");
+    closePasswordModal();
+  }
+
+  async function handleLogOutOtherDevices() {
+    setLoggingOutOtherDevices(true);
+    const res = await fetchWithAuth(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logOutOtherDevices`,
+      { method: "DELETE" },
+    );
+    setLoggingOutOtherDevices(false);
+    if (!res.ok) {
+      toast.error("Failed to log out other devices. Please try again.");
+      return;
+    }
+    toast.success("All other devices have been logged out.");
+  }
+
   async function handleDeleteAccount() {
     setDeletingAccount(true);
     const res = await fetchWithAuth(
@@ -309,6 +392,40 @@ export default function AccountPage() {
               className="text-sm font-medium text-text-muted hover:text-foreground border border-white/10 hover:border-white/20 px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
             >
               Change email
+            </button>
+          </div>
+          <div className="border-t border-white/5" />
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium">Other devices</p>
+              <p className="text-xs text-text-muted">
+                Log out of all sessions except this one.
+              </p>
+            </div>
+            <button
+              onClick={handleLogOutOtherDevices}
+              disabled={loggingOutOtherDevices}
+              className="text-sm font-medium text-text-muted hover:text-foreground border border-white/10 hover:border-white/20 px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loggingOutOtherDevices
+                ? "Logging out…"
+                : "Log out other devices"}
+            </button>
+          </div>
+          <div className="border-t border-white/5" />
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium">Password</p>
+              <p className="text-xs text-text-muted">
+                We&apos;ll email you a code to confirm before changing your
+                password.
+              </p>
+            </div>
+            <button
+              onClick={openPasswordModal}
+              className="text-sm font-medium text-text-muted hover:text-foreground border border-white/10 hover:border-white/20 px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
+            >
+              Change password
             </button>
           </div>
         </section>
@@ -538,6 +655,124 @@ export default function AccountPage() {
             >
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Change password modal */}
+      {showPasswordModal && (
+        <div
+          className={`fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200 ${passwordModalVisible ? "opacity-100" : "opacity-0"}`}
+          onClick={closePasswordModal}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className={`bg-card border border-white/10 rounded-xl p-6 w-full max-w-md flex flex-col gap-5 transition-all duration-200 ${passwordModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                <Lock size={18} />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold">Change password</h2>
+                <p className="text-sm text-text-muted mt-1">
+                  {passwordStep === "sending"
+                    ? "Sending a verification code to your email…"
+                    : `Enter the code sent to ${user?.email} and choose a new password.`}
+                </p>
+              </div>
+            </div>
+
+            {passwordStep === "sending" && (
+              <div className="flex justify-center py-4">
+                <div className="h-5 w-5 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+              </div>
+            )}
+
+            {passwordStep === "code" && (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs text-text-muted">
+                    Verification code
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={passwordCode}
+                    onChange={e => {
+                      setPasswordError("");
+                      setPasswordCode(e.target.value.replace(/\D/g, ""));
+                    }}
+                    placeholder="000000"
+                    autoFocus
+                    className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200 tracking-widest font-mono"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs text-text-muted">
+                    New password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => {
+                      setPasswordError("");
+                      setNewPassword(e.target.value);
+                    }}
+                    className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs text-text-muted">
+                    Confirm new password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => {
+                      setPasswordError("");
+                      setConfirmPassword(e.target.value);
+                    }}
+                    onKeyDown={e => e.key === "Enter" && handleChangePassword()}
+                    className="w-full border border-white/20 rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:border-white/40 transition-colors duration-200"
+                  />
+                </div>
+                {passwordError && (
+                  <p className="text-sm text-destructive">{passwordError}</p>
+                )}
+              </div>
+            )}
+
+            {passwordStep === "sending" && passwordError && (
+              <p className="text-sm text-destructive">{passwordError}</p>
+            )}
+
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={closePasswordModal}
+                disabled={changingPassword}
+                className="text-sm text-text-muted hover:text-foreground transition-colors duration-200 cursor-pointer px-4 py-2 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              {passwordStep === "code" && (
+                <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={
+                    changingPassword ||
+                    passwordCode.length < 6 ||
+                    !newPassword ||
+                    !confirmPassword
+                  }
+                  className="text-sm font-semibold bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {changingPassword ? "Changing…" : "Change password"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
