@@ -174,15 +174,14 @@ function SignupForm() {
           Promotional Code (Optional)
         </label>
         <input
-          id="confirm-password-input"
-          type="password"
+          id="promotional-code-input"
+          type="text"
           value={credentials.promotionalCode}
           onChange={e => {
             setError("");
             setCredentials({ ...credentials, promotionalCode: e.target.value });
           }}
           className="w-full border border-white rounded-lg p-2 text-sm transition-colors duration-200 focus:outline-none focus:border-accent"
-          required
         />
       </div>
       {error && (

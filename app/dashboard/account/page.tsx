@@ -293,7 +293,6 @@ export default function AccountPage() {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password?email=${encodeURIComponent(user?.email ?? "")}`,
       { method: "POST" },
     );
-    console.log(res);
     if (!res.ok) {
       setPasswordError("Failed to send code. Please try again.");
       return;
