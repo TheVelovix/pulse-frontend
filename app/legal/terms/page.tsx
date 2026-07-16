@@ -20,7 +20,7 @@ const sections = [
   },
   {
     title: "4. Payments and Subscriptions",
-    body: "Pro plan subscriptions are billed monthly at $7/month via Paddle, our payment processor. Subscriptions renew automatically unless cancelled. You may cancel at any time from your account page, effective at the end of the current billing period.",
+    body: "Pro plan subscriptions are billed monthly at €7/month or €70/year via Paddle, our payment processor. Subscriptions renew automatically unless cancelled. You may cancel at any time from your account page, effective at the end of the current billing period.",
   },
   {
     title: "5. Refunds",
@@ -57,7 +57,7 @@ export default function TermsPage() {
     <div className="max-w-3xl mx-auto w-full px-6 py-12">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-1">Terms of Service</h1>
-        <p className="text-text-muted text-sm">Last updated: April 20, 2026</p>
+        <p className="text-text-muted text-sm">Last updated: July 16, 2026</p>
       </div>
 
       <div className="bg-card border border-white/10 rounded-xl p-6 sm:p-8 flex flex-col gap-6">
