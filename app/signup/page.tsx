@@ -172,6 +172,7 @@ function SignupForm() {
         )}
         <div className="mt-6 mb-2 w-fit mx-auto">
           <Turnstile
+            id="signup-widget"
             className="mx-auto"
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onSuccess={setTurnstileToken}

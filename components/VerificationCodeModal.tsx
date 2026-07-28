@@ -164,6 +164,7 @@ export default function VerificationCodeModal({
 
         <div className="w-fit mx-auto">
           <Turnstile
+            id="verification-code-widget"
             className="mx-auto"
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onSuccess={setTurnstileToken}
