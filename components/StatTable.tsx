@@ -1,6 +1,7 @@
-export default function StatTable<
-  T extends Record<string, string | number | boolean | null>,
->({
+import { browserIcons, deviceIcons, normalizeBrowserKey, normalizeOsKey, osIcons } from "@/lib/lib";
+import { Globe } from "lucide-react";
+
+export default function StatTable<T extends Record<string, string | number | boolean | null>>({
   title,
   items,
   columns,
@@ -32,6 +33,34 @@ export default function StatTable<
             {items.map((item, i) => (
               <tr key={i} className="border-b border-white/5 last:border-0">
                 {columns.map(col => {
+                  if (col.key === "browser") {
+                    const Icon = browserIcons[normalizeBrowserKey(String(item[col.key]))] ?? Globe;
+                    return (
+                      <td key={String(col.key)} className="py-2 pr-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Icon /> <span>{item[col.key]}</span>
+                        </div>
+                      </td>
+                    );
+                  } else if (col.key === "os") {
+                    const Icon = osIcons[normalizeOsKey(String(item[col.key]))] ?? Globe;
+                    return (
+                      <td key={String(col.key)} className="py-2 pr-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Icon /> <span>{item[col.key]}</span>
+                        </div>
+                      </td>
+                    );
+                  } else if (col.key === "deviceFamily") {
+                    const Icon = deviceIcons[String(item[col.key])] ?? Globe;
+                    return (
+                      <td key={String(col.key)} className="py-2 pr-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Icon size={18} /> <span>{item[col.key]}</span>
+                        </div>
+                      </td>
+                    );
+                  }
                   return (
                     <td key={String(col.key)} className="py-2 pr-4 text-sm">
                       {col.key !== "isSpider" && String(item[col.key] ?? "-")}

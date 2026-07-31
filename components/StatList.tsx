@@ -1,4 +1,5 @@
 import { flag, name } from "country-emoji";
+import Favicon from "./Favicon";
 
 export default function StatList({
   title,
@@ -23,9 +24,16 @@ export default function StatList({
                   style={{ width: `${(item.count / total) * 100}%` }}
                 />
                 <span className="relative px-2 py-0.5 truncate block">
-                  {title === "Countries"
-                    ? `${flag(item.label)} ${name(item.label)}`
-                    : item.label}
+                  {title === "Countries" ? (
+                    `${flag(item.label)} ${name(item.label)}`
+                  ) : title === "Top Referrers" || title === "AI Referrers" ? (
+                    <div className="flex gap-2">
+                      <Favicon url={item.label} />
+                      {item.label}
+                    </div>
+                  ) : (
+                    item.label
+                  )}
                 </span>
               </div>
               <span className="text-text-muted shrink-0">{item.count}</span>

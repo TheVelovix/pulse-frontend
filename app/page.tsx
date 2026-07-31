@@ -11,14 +11,15 @@ import {
 } from "lucide-react";
 import { Metadata } from "next";
 import dashboard from "@/images/dashboard.png";
+import iapi from "@/images/iapi.png";
 import SubscriptionPlans from "@/components/SubscriptionPlans";
 
 export const metadata: Metadata = {
-  title: "Pulse — Privacy-Friendly Website Analytics",
+  title: "Pulse. Privacy-Friendly Website Analytics",
   description:
     "Lightweight, privacy-first analytics for your website. No cookies, no fingerprinting. Add one script tag and get instant insights into visitors, pages, and referrers.",
   openGraph: {
-    title: "Pulse — Privacy-Friendly Website Analytics",
+    title: "Pulse. Privacy-Friendly Website Analytics",
     description:
       "Lightweight, privacy-first analytics for your website. No cookies, no fingerprinting. Add one script tag and get instant insights.",
     url: "https://pulse.velovix.com",
@@ -85,52 +86,63 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center text-center px-6 py-28 md:py-40 overflow-hidden">
-        {/* glow */}
+      <section className="relative flex flex-col items-center justify-center text-center px-6 py-28 md:py-40 overflow-hidden lg:flex-row lg:items-center">
+        {/* Glow */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
           <div className="w-150 h-150 rounded-full bg-accent/10 blur-[120px]" />
         </div>
+        <div>
+          <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-4xl">
+            One script tag. Full analytics.
+            <span className="text-accent"> No cost.</span>
+          </h1>
 
-        <span className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-card px-4 py-1.5 text-xs font-medium text-text-muted">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          Simple · Lightweight · Privacy-first
-        </span>
+          <p className="relative mt-6 max-w-xl text-base text-text-muted mx-auto md:text-lg">
+            Pulse gives you instant, privacy-friendly insights into who visits
+            your site, with a single script tag and zero configuration.
+          </p>
 
-        <h1 className="relative max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          One script tag. Full analytics.
-          <span className="text-accent"> No cost.</span>
-        </h1>
+          <div className="relative mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center">
+            <Link
+              href="/signup"
+              className="w-44 sm:w-auto px-7 py-3 rounded-lg bg-accent hover:bg-accent-hover text-sm font-semibold transition-colors duration-200 text-center"
+            >
+              Get started free
+            </Link>
+            <Link
+              href="/login"
+              className="w-44 sm:w-auto px-7 py-3 rounded-lg border border-white/10 bg-card hover:bg-white/5 text-sm font-medium transition-colors duration-200 text-center"
+            >
+              Log in
+            </Link>
+          </div>
 
-        <p className="relative mt-6 max-w-xl text-base text-text-muted md:text-lg">
-          Pulse gives you instant, privacy-friendly insights into who visits
-          your site, with a single script tag and zero configuration.
-        </p>
-
-        <div className="relative mt-10 flex flex-col sm:flex-row items-center gap-4">
-          <Link
-            href="/signup"
-            className="w-44 sm:w-auto px-7 py-3 rounded-lg bg-accent hover:bg-accent-hover text-sm font-semibold transition-colors duration-200 text-center"
-          >
-            Get started free
-          </Link>
-          <Link
-            href="/login"
-            className="w-44 sm:w-auto px-7 py-3 rounded-lg border border-white/10 bg-card hover:bg-white/5 text-sm font-medium transition-colors duration-200 text-center"
-          >
-            Log in
-          </Link>
+          <p className="relative mt-4 text-xs text-text-muted">
+            Free forever · No credit card required
+          </p>
         </div>
-
-        <p className="relative mt-4 text-xs text-text-muted">
-          Free forever · No credit card required
-        </p>
+        {/* Dashboard screenshot */}
+        <section className="px-6 pb-20 md:pb-28 hidden lg:inline z-10">
+          <div className="mx-auto max-w-5xl">
+            <div className="rounded-2xl border border-white/10 overflow-hidden shadow-2xl shadow-black/40">
+              <Image
+                src={dashboard}
+                alt="Pulse analytics dashboard"
+                width={1456}
+                height={816}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          </div>
+        </section>
       </section>
 
       {/* Dashboard screenshot */}
-      <section className="px-6 pb-20 md:pb-28">
+      <section className="px-6 pb-20 md:pb-28 lg:hidden">
         <div className="mx-auto max-w-5xl">
           <div className="rounded-2xl border border-white/10 overflow-hidden shadow-2xl shadow-black/40">
             <Image
@@ -208,6 +220,24 @@ export default function Home() {
         </div>
       </section>
 
+      {/*Used by Section*/}
+      <section className="px-6 py-10 mx-auto">
+        <h2 className="text-2xl font-bold sm:text-3xl mb-6">Used by</h2>
+        <div className="flex justify-center">
+          <Link
+            href="https://iap-i.com"
+            target="_blank"
+            className="grayscale-100 transition-all duration-200 hover:grayscale-0"
+          >
+            <Image
+              src={iapi}
+              width={100}
+              height={100}
+              alt="Logo of an NGO who's a client of Velovix"
+            />
+          </Link>
+        </div>
+      </section>
       {/* CTA banner */}
       <section className="px-6 py-20 md:py-28">
         <div className="mx-auto max-w-3xl rounded-2xl border border-accent/20 bg-accent/5 px-8 py-14 text-center">
