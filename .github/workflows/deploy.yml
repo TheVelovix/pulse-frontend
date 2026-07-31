@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: ".next,public,package.json,bun.lock,.env.local"
+          source: ".next,public,package.json,bun.lock,.env.local,next.config.ts"
           target: /var/www/pulse-frontend
           overwrite: true
 

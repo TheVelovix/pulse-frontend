@@ -1,4 +1,4 @@
-import { Bot, Monitor, Smartphone, Tablet } from "lucide-react";
+import { Bot, Monitor, Smartphone } from "lucide-react";
 import {
   SiBrave,
   SiFirefoxbrowser,
@@ -11,6 +11,15 @@ import {
   SiLinux,
   SiAndroid,
   SiUbuntu,
+  SiGoogle,
+  SiLg,
+  SiHuawei,
+  SiXiaomi,
+  SiOneplus,
+  SiMotorola,
+  SiSony,
+  SiHtc,
+  SiNokia,
 } from "react-icons/si";
 import { FaEdge, FaInternetExplorer, FaWindows } from "react-icons/fa";
 
@@ -74,9 +83,27 @@ export const osBrandColors: Record<string, string> = {
   ChromeOS: "#4285F4",
 };
 
-export const deviceIcons: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
-  Desktop: Monitor,
-  Mobile: Smartphone,
-  Tablet: Tablet,
-  Bot: Bot,
+export function normalizeDeviceBrandKey(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "Other";
+  return trimmed;
+}
+
+export const deviceBrandIcons: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  Apple: SiApple,
+  Google: SiGoogle,
+  Samsung: SiSamsung,
+  LG: SiLg,
+  Huawei: SiHuawei,
+  Xiaomi: SiXiaomi,
+  OnePlus: SiOneplus,
+  Motorola: SiMotorola,
+  Sony: SiSony,
+  HTC: SiHtc,
+  Nokia: SiNokia,
+  Spider: Bot,
+  Generic_Android: SiAndroid,
+  Generic_Android_Tablet: SiAndroid,
+  Generic: Smartphone,
+  Other: Monitor,
 };
