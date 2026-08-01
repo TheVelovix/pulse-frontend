@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  experimental: {
-    //@ts-expect-error Object literal may only specify known properties, and 'turbo' does not exist in type 'ExperimentalConfig'. (typescript 2353)
-    turbo: false,
-  },
   images: {
     remotePatterns: [
       {

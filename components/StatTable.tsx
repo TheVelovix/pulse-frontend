@@ -1,4 +1,11 @@
-import { browserIcons, deviceBrandIcons, normalizeBrowserKey, normalizeDeviceBrandKey, normalizeOsKey, osIcons } from "@/lib/lib";
+import {
+  browserIcons,
+  deviceBrandIcons,
+  normalizeBrowserKey,
+  normalizeDeviceBrandKey,
+  normalizeOsKey,
+  osIcons,
+} from "@/lib/lib";
 import { Globe } from "lucide-react";
 
 export default function StatTable<T extends Record<string, string | number | boolean | null>>({
@@ -38,7 +45,7 @@ export default function StatTable<T extends Record<string, string | number | boo
                     return (
                       <td key={String(col.key)} className="py-2 pr-4 text-sm">
                         <div className="flex items-center gap-2">
-                          <Icon /> <span>{item[col.key]}</span>
+                          <Icon size={18} /> <span>{item[col.key]}</span>
                         </div>
                       </td>
                     );
@@ -47,13 +54,14 @@ export default function StatTable<T extends Record<string, string | number | boo
                     return (
                       <td key={String(col.key)} className="py-2 pr-4 text-sm">
                         <div className="flex items-center gap-2">
-                          <Icon /> <span>{item[col.key]}</span>
+                          <Icon size={18} /> <span>{item[col.key]}</span>
                         </div>
                       </td>
                     );
                   } else if (col.key === "deviceBrand") {
                     const Icon =
-                      deviceBrandIcons[normalizeDeviceBrandKey(String(item[col.key] ?? ""))] ?? Globe;
+                      deviceBrandIcons[normalizeDeviceBrandKey(String(item[col.key] ?? ""))] ??
+                      Globe;
                     return (
                       <td key={String(col.key)} className="py-2 pr-4 text-sm">
                         <div className="flex items-center gap-2">

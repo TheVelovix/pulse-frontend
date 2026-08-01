@@ -36,7 +36,7 @@ export function normalizeBrowserKey(raw: string): string {
   return raw.replace(/ mobile$/i, "");
 }
 
-export const browserIcons: Record<string, React.ComponentType> = {
+export const browserIcons: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
   Chrome: SiGooglechrome,
   Firefox: SiFirefoxbrowser,
   Safari: SiSafari,
