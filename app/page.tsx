@@ -1,18 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Zap,
-  BarChart2,
-  Shield,
-  Globe,
-  Layers,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react";
+import { Zap, BarChart2, Shield, Globe, Layers, Wrench, type LucideIcon } from "lucide-react";
 import { Metadata } from "next";
 import dashboard from "@/images/dashboard.png";
 import iapi from "@/images/iapi.png";
 import SubscriptionPlans from "@/components/SubscriptionPlans";
+import profitproLogo from "@/images/profitprologo.png";
 
 export const metadata: Metadata = {
   title: "Pulse. Privacy-Friendly Website Analytics",
@@ -101,8 +94,8 @@ export default function Home() {
           </h1>
 
           <p className="relative mt-6 max-w-xl text-base text-text-muted mx-auto md:text-lg">
-            Pulse gives you instant, privacy-friendly insights into who visits
-            your site, with a single script tag and zero configuration.
+            Pulse gives you instant, privacy-friendly insights into who visits your site, with a
+            single script tag and zero configuration.
           </p>
 
           <div className="relative mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center">
@@ -177,9 +170,7 @@ export default function Home() {
                   <f.icon size={20} />
                 </div>
                 <h3 className="text-sm font-semibold">{f.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">
-                  {f.description}
-                </p>
+                <p className="text-sm text-text-muted leading-relaxed">{f.description}</p>
               </div>
             ))}
           </div>
@@ -211,9 +202,7 @@ export default function Home() {
                   )}
                 </div>
                 <h3 className="text-sm font-semibold mt-1">{step.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">
-                  {step.description}
-                </p>
+                <p className="text-sm text-text-muted leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
@@ -222,8 +211,8 @@ export default function Home() {
 
       {/*Used by Section*/}
       <section className="px-6 py-10 mx-auto">
-        <h2 className="text-2xl font-bold sm:text-3xl mb-6">Used by</h2>
-        <div className="flex justify-center">
+        <h2 className="text-2xl text-center font-bold sm:text-3xl mb-6">Used by</h2>
+        <div className="flex justify-center gap-6">
           <Link
             href="https://iap-i.com"
             target="_blank"
@@ -236,6 +225,20 @@ export default function Home() {
               alt="Logo of an NGO who's a client of Velovix"
             />
           </Link>
+
+          <Link
+            href="https://profitproacc.com"
+            target="_blank"
+            className="grayscale-100 transition-all duration-200 hover:grayscale-0"
+          >
+            <Image
+              src={profitproLogo}
+              width={100}
+              height={100}
+              alt="Logo of ProfitPro Accounting"
+              className="rounded-full"
+            />
+          </Link>
         </div>
       </section>
       {/* CTA banner */}
@@ -245,8 +248,7 @@ export default function Home() {
             Ready to understand your audience?
           </h2>
           <p className="text-text-muted text-sm md:text-base mb-8">
-            Create your free account and add Pulse to your site in under two
-            minutes.
+            Create your free account and add Pulse to your site in under two minutes.
           </p>
           <Link
             href="/signup"
@@ -254,9 +256,7 @@ export default function Home() {
           >
             Start for free
           </Link>
-          <p className="mt-4 text-xs text-text-muted">
-            No credit card required
-          </p>
+          <p className="mt-4 text-xs text-text-muted">No credit card required</p>
         </div>
       </section>
     </div>
