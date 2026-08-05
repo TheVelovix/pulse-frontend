@@ -1,6 +1,6 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { SubscriptionPlan, useSession } from "@/context/SessionContext";
 import DateRangePicker from "@/components/DateRangePicker";
@@ -24,18 +24,15 @@ export default function ProjectPage() {
   const [customTo, setCustomTo] = useState<string>("");
   const { analytics, loading } = useAnalytics(id, days, customFrom, customTo);
   const [project, setProject] = useState<Project | null>(null);
-  const [searchConsoleData, setSearchConsoleData] = useState<
-    GoogleSearchConsoleData[]
-  >([]);
+  const [searchConsoleData, setSearchConsoleData] = useState<GoogleSearchConsoleData[]>([]);
   const [searchConsoleConnected, setSearchConsoleConnected] = useState(false);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const session = useSession();
   useEffect(() => {
-    fetch(`/api/projects`, { credentials: "include" })
+    fetch(`/api/projects/${id}`, { credentials: "include" })
       .then(res => res.json())
-      .then((data: Project[]) => {
-        const found = data.find(p => p.id === id);
-        setProject(found ?? null);
+      .then((data: Project) => {
+        setProject(data ?? null);
       });
     const searchConsoleParam = searchParams.get("search-console");
     fetch(`/api/search-console/${id}`, { credentials: "include" })
@@ -47,15 +44,12 @@ export default function ProjectPage() {
         }
         if (res.status === 500) {
           if (searchConsoleParam && searchConsoleParam === "connected")
-            toast.error(
-              "Failed to get search console data. Please report at: info@velovix.com",
-            );
+            toast.error("Failed to get search console data. Please report at: info@velovix.com");
           return [];
         }
         if (res.status === 404) {
           res.text().then(text => {
-            if (text === "search-console-not-connected")
-              setSearchConsoleConnected(false);
+            if (text === "search-console-not-connected") setSearchConsoleConnected(false);
           });
           return [];
         }
@@ -112,15 +106,16 @@ export default function ProjectPage() {
   }, [id]);
   function copyPublicLink() {
     navigator.clipboard
-      .writeText(
-        `https://pulse.velovix.com/public-dashboard/${project?.publicSlug}`,
-      )
+      .writeText(`https://pulse.velovix.com/public-dashboard/${project?.publicSlug}`)
       .then(() => toast.success("Copied public dashboard link"));
   }
+  const refetchProject = useCallback(async () => {
+    const res = await fetch(`/api/projects/${id}`, { credentials: "include" });
+    const data: Project = await res.json();
+    setProject(data ?? null);
+  }, [id]);
   if (!analytics && !loading)
-    return (
-      <p className="text-text-muted text-sm p-10">Failed to load analytics.</p>
-    );
+    return <p className="text-text-muted text-sm p-10">Failed to load analytics.</p>;
 
   return (
     <div className="mx-auto max-w-7xl w-full px-6 py-10 flex flex-col gap-8">
@@ -201,14 +196,23 @@ export default function ProjectPage() {
             <p>Export CSV</p>
           </button>
         )}
+        {session.user?.subscriptionPlan === SubscriptionPlan.PRO && !searchConsoleConnected && (
+          <a
+            className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
+            target="_blank"
+            href={`/api/search-console/connect/${id}`}
+          >
+            <p>Connect Google Search Console</p>
+          </a>
+        )}
         {session.user?.subscriptionPlan === SubscriptionPlan.PRO &&
-          !searchConsoleConnected && (
+          project &&
+          !project.importedGa && (
             <a
               className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
-              target="_blank"
-              href={`/api/search-console/connect/${id}`}
+              href={`/api/ga-import/connect/${id}`}
             >
-              <p>Connect Google Search Console</p>
+              <p>Import from Google Analytics</p>
             </a>
           )}
       </div>
@@ -217,7 +221,7 @@ export default function ProjectPage() {
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
-      <GaImportModal projectId={id} />
+      <GaImportModal projectId={id} refetchProject={refetchProject} />
       {analytics && (
         <ProjectAnalytics
           analytics={analytics}
@@ -259,16 +263,12 @@ function ScriptModal({
       ref={overlayRef}
       onClick={handleOverlayClick}
       className={`fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
-        open
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none"
+        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
       <div
         className={`bg-card border border-white/10 rounded-xl p-6 w-full max-w-lg shadow-xl transition-all duration-300 ${
-          open
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 translate-y-4"
+          open ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"
         }`}
       >
         <div className="flex items-center justify-between mb-4">
@@ -282,8 +282,8 @@ function ScriptModal({
           </button>
         </div>
         <p className="text-text-muted text-sm mb-4">
-          Paste this script tag inside the{" "}
-          <code className="text-accent">&lt;head&gt;</code> of your site.
+          Paste this script tag inside the <code className="text-accent">&lt;head&gt;</code> of your
+          site.
         </p>
         <div className="relative bg-background border border-white/10 rounded-lg p-4 overflow-x-auto">
           <pre className="text-sm text-foreground whitespace-pre-wrap break-all pr-2">

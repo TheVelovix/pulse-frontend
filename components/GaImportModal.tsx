@@ -8,7 +8,13 @@ interface GaProperty {
   DisplayName: string;
 }
 
-export default function GaImportModal({ projectId }: { projectId: string }) {
+export default function GaImportModal({
+  projectId,
+  refetchProject,
+}: {
+  projectId: string;
+  refetchProject: () => Promise<void>;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -58,6 +64,7 @@ export default function GaImportModal({ projectId }: { projectId: string }) {
           setOpen(false);
           // Clear URL params
           router.replace(`/dashboard/project/${projectId}`);
+          await refetchProject();
         }
       } else {
         toast.error("Import failed. Please try again.");
@@ -78,8 +85,8 @@ export default function GaImportModal({ projectId }: { projectId: string }) {
         <div>
           <h2 className="text-lg font-bold">Import from Google Analytics</h2>
           <p className="text-text-muted text-sm mt-1">
-            Select a GA4 property to import historical data from. This will
-            import up to 2 years of page views.
+            Select a GA4 property to import historical data from. This will import up to 2 years of
+            page views.
           </p>
         </div>
 

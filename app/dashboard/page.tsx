@@ -182,6 +182,7 @@ export default function Dashboard() {
                 createdAt: new Date().toISOString(),
                 isPublic: false,
                 publicSlug: null,
+                importedGa: false,
               },
             ].map(project => (
               <a href={`/dashboard/project/${project.id}`} key={project.id}>

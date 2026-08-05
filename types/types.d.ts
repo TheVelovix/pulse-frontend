@@ -14,6 +14,7 @@ interface Project {
   createdAt: string;
   isPublic: boolean;
   publicSlug: string | null;
+  importedGa: boolean;
 }
 interface UTMStats {
   topSources: { source: string; count: number }[];
