@@ -19,31 +19,35 @@ const sections = [
     body: "We use your account data to provide and manage the service. Analytics data is used solely to generate the reports visible in your dashboard. We do not sell your data or your visitors' data to any third party.",
   },
   {
-    title: "4. Data Retention",
-    body: "Free plan analytics data is retained for 30 days. Pro plan analytics data is retained for 12 months. You may delete your account at any time, which permanently removes all associated data.",
+    title: "4. Data Sharing and Disclosure",
+    body: "Pulse does not share, sell, rent, transfer, or otherwise disclose your account data, your website visitors' analytics data, or any Google user data accessed through our integrations to any third party for advertising, marketing, or any other unrelated purpose. We do not use this data to train AI or machine learning models, and we do not transfer it to any third-party AI or ML service. The only parties with limited access to data are the infrastructure and payment providers listed below, who process data solely on our behalf and are contractually restricted from using it for their own purposes: our cloud hosting provider, which stores data as part of running the service, and Paddle, our payment processor, which handles payment transactions as described in Section 5. We do not disclose data to any other party except where required by law.",
   },
   {
-    title: "5. Payment Processing",
+    title: "5. Data Retention",
+    body: "Free plan analytics data is retained for 30 days. Pro plan analytics data is retained for 24 months. You may delete your account at any time, which permanently removes all associated data.",
+  },
+  {
+    title: "6. Payment Processing",
     body: "Payments are processed by Paddle. We do not store your payment card details. Please refer to Paddle's privacy policy for information on how they handle payment data.",
   },
   {
-    title: "6. Data Security",
+    title: "7. Data Security",
     body: "Passwords are stored using bcrypt hashing. We use HTTPS for all data transmission.",
   },
   {
-    title: "7. Your Rights",
+    title: "8. Your Rights",
     body: "You may request access to, correction of, or deletion of your personal data at any time by contacting us at info@velovix.com or by deleting your account directly from the app.",
   },
   {
-    title: "8. GDPR",
+    title: "9. GDPR",
     body: "Pulse is designed to be GDPR-friendly. We do not collect personally identifiable information about your website visitors. No cookies are set by our tracking script.",
   },
   {
-    title: "9. Changes",
+    title: "10. Changes",
     body: "We may update this policy at any time. We will notify registered users of significant changes via email.",
   },
   {
-    title: "10. Contact",
+    title: "11. Contact",
     body: "info@velovix.com",
   },
 ];
@@ -53,7 +57,7 @@ export default function PrivacyPage() {
     <div className="max-w-3xl mx-auto w-full px-6 py-12">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-1">Privacy Policy</h1>
-        <p className="text-text-muted text-sm">Last updated: April 20, 2026</p>
+        <p className="text-text-muted text-sm">Last updated: August 7, 2026</p>
       </div>
 
       <div className="bg-card border border-white/10 rounded-xl p-6 sm:p-8 flex flex-col gap-6">
