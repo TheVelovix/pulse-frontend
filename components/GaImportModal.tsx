@@ -67,7 +67,10 @@ export default function GaImportModal({
           await refetchProject();
         }
       } else {
-        toast.error("Import failed. Please try again.");
+        if (res.headers.get("Content-Type")?.includes("text/plain")) {
+          const text = await res.text();
+          if (text === "already-imported") toast.error("Already imported from Google Analytics");
+        } else toast.error("Import failed. Please try again.");
       }
     } catch (e) {
       console.error("Import error:", e);

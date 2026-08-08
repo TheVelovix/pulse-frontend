@@ -17,25 +17,25 @@ const DATE_RANGES = [
 ];
 
 export default function ProjectPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: projectId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const [days, setDays] = useState<number | undefined>(30);
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
-  const { analytics, loading } = useAnalytics(id, days, customFrom, customTo);
+  const { analytics, loading } = useAnalytics(projectId, days, customFrom, customTo);
   const [project, setProject] = useState<Project | null>(null);
   const [searchConsoleData, setSearchConsoleData] = useState<GoogleSearchConsoleData[]>([]);
   const [searchConsoleConnected, setSearchConsoleConnected] = useState(false);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const session = useSession();
   useEffect(() => {
-    fetch(`/api/projects/${id}`, { credentials: "include" })
+    fetch(`/api/projects/${projectId}`, { credentials: "include" })
       .then(res => res.json())
       .then((data: Project) => {
         setProject(data ?? null);
       });
     const searchConsoleParam = searchParams.get("search-console");
-    fetch(`/api/search-console/${id}`, { credentials: "include" })
+    fetch(`/api/search-console/${projectId}`, { credentials: "include" })
       .then(res => {
         if (res.status == 403) {
           if (searchConsoleParam && searchConsoleParam === "connected")
@@ -59,7 +59,7 @@ export default function ProjectPage() {
         setSearchConsoleData(data);
         setSearchConsoleConnected(true);
       });
-  }, [id]);
+  }, [projectId]);
   async function exportCsv() {
     const params = new URLSearchParams();
     if (customFrom && customTo) {
@@ -70,7 +70,7 @@ export default function ProjectPage() {
     }
 
     const query = params.size > 0 ? `?${params.toString()}` : "";
-    const res = await fetchWithAuth(`/api/analytics/${id}/export${query}`, {
+    const res = await fetchWithAuth(`/api/analytics/${projectId}/export${query}`, {
       credentials: "include",
     });
     if (!res.ok) {
@@ -90,7 +90,7 @@ export default function ProjectPage() {
   const [liveVisitors, setLiveVisitors] = useState<number>(0);
   useEffect(() => {
     const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/analytics/${id}/live`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/analytics/${projectId}/live`,
       { withCredentials: true },
     );
 
@@ -103,17 +103,17 @@ export default function ProjectPage() {
     };
 
     return () => eventSource.close();
-  }, [id]);
+  }, [projectId]);
   function copyPublicLink() {
     navigator.clipboard
       .writeText(`https://pulse.velovix.com/public-dashboard/${project?.publicSlug}`)
       .then(() => toast.success("Copied public dashboard link"));
   }
   const refetchProject = useCallback(async () => {
-    const res = await fetch(`/api/projects/${id}`, { credentials: "include" });
+    const res = await fetch(`/api/projects/${projectId}`, { credentials: "include" });
     const data: Project = await res.json();
     setProject(data ?? null);
-  }, [id]);
+  }, [projectId]);
   if (!analytics && !loading)
     return <p className="text-text-muted text-sm p-10">Failed to load analytics.</p>;
 
@@ -200,7 +200,7 @@ export default function ProjectPage() {
           <a
             className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
             target="_blank"
-            href={`/api/search-console/connect/${id}`}
+            href={`/api/search-console/connect/${projectId}`}
           >
             <p>Connect Google Search Console</p>
           </a>
@@ -210,18 +210,18 @@ export default function ProjectPage() {
           !project.importedGa && (
             <a
               className="bg-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:opacity-80"
-              href={`/api/ga-import/connect/${id}`}
+              href={`/api/ga-import/connect/${projectId}`}
             >
               <p>Import from Google Analytics</p>
             </a>
           )}
       </div>
       <ScriptModal
-        projectId={id}
+        projectId={projectId}
         open={showScriptModal}
         onClose={() => setShowScriptModal(false)}
       />
-      <GaImportModal projectId={id} refetchProject={refetchProject} />
+      <GaImportModal projectId={projectId} refetchProject={refetchProject} />
       {analytics && (
         <ProjectAnalytics
           analytics={analytics}

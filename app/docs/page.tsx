@@ -1,12 +1,4 @@
-import {
-  BookOpen,
-  Zap,
-  Key,
-  BarChart2,
-  Layers,
-  Radio,
-  MousePointerClick,
-} from "lucide-react";
+import { BookOpen, Zap, Key, BarChart2, Layers, Radio, MousePointerClick } from "lucide-react";
 import DocsMobileNav from "@/components/DocsMobileNav";
 import { ShieldSlashIcon } from "@phosphor-icons/react/dist/ssr";
 
@@ -80,9 +72,7 @@ function Endpoint({
                 key={p.name}
                 className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 px-4 py-2.5 text-xs ${i !== 0 ? "border-t border-white/5" : ""}`}
               >
-                <code className="font-mono text-foreground shrink-0">
-                  {p.name}
-                </code>
+                <code className="font-mono text-foreground shrink-0">{p.name}</code>
                 <span className="text-text-muted shrink-0">
                   {p.in} · {p.required ? "required" : "optional"}
                 </span>
@@ -93,9 +83,7 @@ function Endpoint({
         </div>
       )}
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-          Response
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Response</p>
         <CodeBlock>{response}</CodeBlock>
       </div>
     </div>
@@ -135,9 +123,9 @@ export default function DocsPage() {
             <h1 className="text-2xl font-bold">Introduction</h1>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            The Pulse REST API lets you access your analytics data, manage
-            projects, and stream live visitor counts programmatically. All API
-            endpoints are available to Pro subscribers using an API key.
+            The Pulse REST API lets you access your analytics data, manage projects, and stream live
+            visitor counts programmatically. All API endpoints are available to Pro subscribers
+            using an API key.
           </p>
           <div className="rounded-xl border border-white/10 bg-card p-5 flex flex-col gap-2">
             <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
@@ -157,9 +145,7 @@ export default function DocsPage() {
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
             Add Pulse to any website by pasting a single script tag into your{" "}
-            <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
-              &lt;head&gt;
-            </code>
+            <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">&lt;head&gt;</code>
             . No build step, no configuration.
           </p>
           <CodeBlock>{`<script
@@ -172,14 +158,14 @@ export default function DocsPage() {
             <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
               YOUR_PROJECT_ID
             </code>{" "}
-            with the ID found on your project&apos;s dashboard page. Page views
-            will appear within seconds.
+            with the ID found on your project&apos;s dashboard page. Page views will appear within
+            seconds.
           </p>
           <div className="rounded-xl border border-accent/20 bg-accent/5 p-5 flex flex-col gap-2">
             <p className="text-sm font-semibold">What gets tracked?</p>
             <p className="text-sm text-text-muted leading-relaxed">
-              Page URL, referrer, device type, browser, and country that&apos;s
-              it. No cookies, no fingerprinting, no personal data.
+              Page URL, referrer, device type, browser, and country that&apos;s it. No cookies, no
+              fingerprinting, no personal data.
             </p>
           </div>
         </section>
@@ -194,11 +180,8 @@ export default function DocsPage() {
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
             API requests are authenticated using an API key passed in the{" "}
-            <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
-              X-Api-Key
-            </code>{" "}
-            header. API keys require a Pro subscription and can be created in
-            your{" "}
+            <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">X-Api-Key</code>{" "}
+            header. API keys require a Pro subscription and can be created in your{" "}
             <a
               href="/dashboard/account"
               className="text-accent hover:text-accent-hover transition-colors"
@@ -221,28 +204,21 @@ export default function DocsPage() {
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Badge method="POST" />
-                <code className="font-mono text-xs">
-                  /api/v1/user/apiKeys?name=
-                </code>
+                <code className="font-mono text-xs">/api/v1/user/apiKeys?name=</code>
                 <span className="text-text-muted">Create a new key</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Badge method="DELETE" />
-                <code className="font-mono text-xs">
-                  /api/v1/user/apiKeys?name=
-                </code>
+                <code className="font-mono text-xs">/api/v1/user/apiKeys?name=</code>
                 <span className="text-text-muted">Revoke a key by name</span>
               </div>
             </div>
           </div>
           <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-5">
-            <p className="text-sm font-semibold text-destructive mb-1">
-              Store your key securely
-            </p>
+            <p className="text-sm font-semibold text-destructive mb-1">Store your key securely</p>
             <p className="text-sm text-text-muted">
-              Your key is only shown once at creation time. Pulse stores a
-              hashed copy and cannot recover it. If you lose it, delete the key
-              and create a new one.
+              Your key is only shown once at creation time. Pulse stores a hashed copy and cannot
+              recover it. If you lose it, delete the key and create a new one.
             </p>
           </div>
         </section>
@@ -256,8 +232,8 @@ export default function DocsPage() {
             <h2 className="text-xl font-bold">Projects</h2>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            A project represents a single tracked domain. Each project gets its
-            own ID used to scope analytics queries.
+            A project represents a single tracked domain. Each project gets its own ID used to scope
+            analytics queries.
           </p>
 
           <Endpoint
@@ -340,8 +316,8 @@ export default function DocsPage() {
             <h2 className="text-xl font-bold">Analytics</h2>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            Query aggregated analytics for any of your projects. Data is
-            retained for 30 days on the Free plan and 2 years on Pro.
+            Query aggregated analytics for any of your projects. Data is retained for 30 days on the
+            Free plan and 2 years on Pro.
           </p>
 
           <Endpoint
@@ -433,9 +409,9 @@ date,views
             <h2 className="text-xl font-bold">Live Views</h2>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            The live endpoint streams the current active visitor count for a
-            project using Server-Sent Events (SSE). The connection stays open
-            and pushes an update whenever the count changes.
+            The live endpoint streams the current active visitor count for a project using
+            Server-Sent Events (SSE). The connection stays open and pushes an update whenever the
+            count changes.
           </p>
 
           <Endpoint
@@ -471,12 +447,9 @@ es.onmessage = (e) => {
           <div className="rounded-xl border border-accent/20 bg-accent/5 p-5">
             <p className="text-sm font-semibold mb-1">Pro only</p>
             <p className="text-sm text-text-muted">
-              Live visitor data is only available on the Pro plan. The endpoint
-              returns{" "}
-              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
-                401
-              </code>{" "}
-              for Free accounts.
+              Live visitor data is only available on the Pro plan. The endpoint returns{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">401</code> for
+              Free accounts.
             </p>
           </div>
         </section>
@@ -489,9 +462,9 @@ es.onmessage = (e) => {
             <h2 className="text-xl font-bold">Custom Events</h2>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            Custom events let you track specific actions on your site like
-            signups, purchases, or button clicks. They are available to Pro
-            subscribers and require the Pulse script to be installed.
+            Custom events let you track specific actions on your site like signups, purchases, or
+            button clicks. They are available to Pro subscribers and require the Pulse script to be
+            installed.
           </p>
 
           {/* Basic usage */}
@@ -518,8 +491,7 @@ pulse.track("404", { path: window.location.pathname });`}</CodeBlock>
           <div className="flex flex-col gap-2">
             <p className="text-sm font-semibold">TypeScript support</p>
             <p className="text-text-muted text-sm leading-relaxed">
-              For intellisense and type safety, paste this declaration file into
-              your project:
+              For intellisense and type safety, paste this declaration file into your project:
             </p>
             <CodeBlock>{`// pulse.d.ts
 interface PulseProps {
@@ -540,11 +512,9 @@ declare global {
             <p className="text-sm font-semibold">Revenue tracking</p>
             <p className="text-text-muted text-sm leading-relaxed">
               Pass a{" "}
-              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
-                revenue
-              </code>{" "}
-              property to track monetary value associated with an event. Revenue
-              is displayed separately in your dashboard.
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">revenue</code>{" "}
+              property to track monetary value associated with an event. Revenue is displayed
+              separately in your dashboard.
             </p>
             <CodeBlock>{`pulse.track("purchase", { plan: "pro", revenue: 7.00 });`}</CodeBlock>
           </div>
@@ -598,12 +568,8 @@ declare global {
           <div className="rounded-xl border border-accent/20 bg-accent/5 p-5">
             <p className="text-sm font-semibold mb-1">Pro only</p>
             <p className="text-sm text-text-muted">
-              Custom events are only available on the Pro plan. Calls from Free
-              plan projects return{" "}
-              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">
-                403
-              </code>
-              .
+              Custom events are only available on the Pro plan. Calls from Free plan projects return{" "}
+              <code className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded">403</code>.
             </p>
           </div>
         </section>
@@ -617,10 +583,9 @@ declare global {
             <h2 className="text-xl font-bold">Bypassing Ad Blockers</h2>
           </div>
           <p className="text-text-muted text-sm leading-relaxed">
-            By default, the Pulse script is loaded from api.pulse.velovix.com
-            which some ad blockers may block. To ensure accurate data, you can
-            proxy the script through your own domain so it appears as a
-            first-party request.
+            By default, the Pulse script is loaded from api.pulse.velovix.com which some ad blockers
+            may block. To ensure accurate data, you can proxy the script through your own domain so
+            it appears as a first-party request.
           </p>
 
           {/* Next.js */}
