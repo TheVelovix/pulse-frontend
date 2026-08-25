@@ -7,8 +7,8 @@ import {
   XLogoIcon,
   LinkedinLogoIcon,
   GithubLogoIcon,
+  AndroidLogoIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import bluesky from "@/images/bluesky.svg";
 
 export default function Footer() {
   return (
@@ -70,6 +70,13 @@ export default function Footer() {
                   strokeLinejoin="round"
                 />
               </svg>
+            </Link>
+            <Link
+              target="_blank"
+              href="/android"
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-all duration-200"
+            >
+              <AndroidLogoIcon size={20} />
             </Link>
           </div>
         </div>

@@ -3,7 +3,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: "https://pulse.velovix.com",
-      lastModified: new Date("2026-04-30"),
+      lastModified: new Date("2026-08-25"),
       changeFrequency: "monthly",
       priority: 1,
     },
