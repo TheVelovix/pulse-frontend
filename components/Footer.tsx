@@ -72,7 +72,6 @@ export default function Footer() {
               </svg>
             </Link>
             <Link
-              target="_blank"
               href="/android"
               className="flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-all duration-200"
             >
