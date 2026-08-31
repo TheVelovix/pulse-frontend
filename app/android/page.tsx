@@ -65,7 +65,7 @@ export default function AndroidPage() {
           <Image
             src={mockup}
             alt="Samsung Mockup of the Android app"
-            className="drop-shadow-accent drop-shadow-sm"
+            className="drop-shadow-accent drop-shadow-sm md:w-120"
           />
         </div>
       </section>
