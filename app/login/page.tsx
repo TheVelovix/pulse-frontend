@@ -38,8 +38,7 @@ export default function Login() {
             await session.login(e, { ...credentials, turnstileToken });
           } catch (err: unknown) {
             if (err instanceof Error) {
-              if (err.message === "invalid-credentials")
-                setError("Invalid email or password.");
+              if (err.message === "invalid-credentials") setError("Invalid email or password.");
               else if (err.message === "captcha-failed")
                 setError("CAPTCHA verification failed. Please try again.");
             }
@@ -47,9 +46,7 @@ export default function Login() {
         }}
         className="bg-card w-[90%] mx-auto border border-white my-auto p-4 rounded-lg sm:w-3/4 md:w-2/4 lg:w-2/5 2xl:w-1/4"
       >
-        <h2 className="font-semibold text-center text-lg mb-4">
-          Enter your credentials
-        </h2>
+        <h2 className="font-semibold text-center text-lg mb-4">Enter your credentials</h2>
         <div className="my-5 flex flex-col gap-2">
           <label htmlFor="email-input" className="text-sm font-medium">
             Email
@@ -92,9 +89,7 @@ export default function Login() {
             required
           />
         </div>
-        {error && (
-          <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
         <div className="mt-6 mb-2 w-fit mx-auto">
           <Turnstile
             className="mx-auto"
@@ -164,7 +159,7 @@ function ResetPasswordForm({ onClose }: { onClose: () => void }) {
     setStep("code");
   }
 
-  async function handleCodeSubmit(e: React.FormEvent) {
+  async function handleCodeSubmit(e: React.SubmitEvent) {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
@@ -172,10 +167,11 @@ function ResetPasswordForm({ onClose }: { onClose: () => void }) {
     }
     setLoading(true);
     setError("");
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password?code=${encodeURIComponent(code)}&newPassword=${encodeURIComponent(newPassword)}`,
-      { method: "PATCH" },
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, newPassword }),
+    });
     setLoading(false);
     if (res.status === 400) {
       setError("Invalid or expired code. Please request a new one.");
