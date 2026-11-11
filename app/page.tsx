@@ -100,6 +100,12 @@ export default function Home() {
 
           <div className="relative mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center">
             <Link
+              href="/public-dashboard/pulse"
+              className="w-44 sm:w-auto px-7 py-3 rounded-lg bg-accent hover:bg-accent-hover text-sm font-semibold transition-colors duration-200 text-center"
+            >
+              Check out demo
+            </Link>
+            <Link
               href="/signup"
               className="w-44 sm:w-auto px-7 py-3 rounded-lg bg-accent hover:bg-accent-hover text-sm font-semibold transition-colors duration-200 text-center"
             >
