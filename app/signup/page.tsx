@@ -88,9 +88,7 @@ function SignupForm() {
         onSubmit={e => signup(e)}
         className="bg-card w-[90%] mx-auto border border-white my-auto p-4 rounded-lg sm:w-3/4 md:w-2/4 lg:w-2/5 2xl:w-1/4"
       >
-        <h2 className="font-semibold text-center text-lg mb-4">
-          Create your account
-        </h2>
+        <h2 className="font-semibold text-center text-lg mb-4">Create your account</h2>
         <div className="my-5 flex flex-col gap-2">
           <label htmlFor="email-input" className="text-sm font-medium">
             Email
@@ -125,10 +123,7 @@ function SignupForm() {
           />
         </div>
         <div className="my-5 flex flex-col gap-2">
-          <label
-            htmlFor="confirm-password-input"
-            className="text-sm font-medium"
-          >
+          <label htmlFor="confirm-password-input" className="text-sm font-medium">
             Confirm Password
           </label>
           <input
@@ -147,10 +142,7 @@ function SignupForm() {
           />
         </div>
         <div className="my-5 flex flex-col gap-2">
-          <label
-            htmlFor="confirm-password-input"
-            className="text-sm font-medium"
-          >
+          <label htmlFor="confirm-password-input" className="text-sm font-medium">
             Promotional Code (Optional)
           </label>
           <input
@@ -167,9 +159,7 @@ function SignupForm() {
             className="w-full border border-white rounded-lg p-2 text-sm transition-colors duration-200 focus:outline-none focus:border-accent"
           />
         </div>
-        {error && (
-          <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
         <div className="mt-6 mb-2 w-fit mx-auto">
           <Turnstile
             id="signup-widget"
