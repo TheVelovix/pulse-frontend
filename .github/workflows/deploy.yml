@@ -43,5 +43,5 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /var/www/pulse-frontend
-            /home/root/.bun/bin/bun install --production
+            bun install --production
             sudo systemctl restart pulse-frontend
