@@ -3,26 +3,22 @@ import { Globe } from "lucide-react";
 import Image from "next/image";
 import { getFaviconUrl } from "@/lib/lib";
 
-export default function Favicon({
-  url,
-  size = 20,
-}: {
-  url: string;
-  size?: number;
-}) {
+export default function Favicon({ url, size = 20 }: { url: string; size?: number }) {
   const [failed, setFailed] = useState(false);
+  const src = getFaviconUrl(url);
 
-  if (failed) {
+  if (failed || !src) {
     return <Globe size={size} className="text-muted-foreground" />;
   }
 
   return (
     <Image
-      src={getFaviconUrl(url, size * 2)}
+      src={src}
       alt=""
       width={size}
       height={size}
       onError={() => setFailed(true)}
+      unoptimized
     />
   );
 }

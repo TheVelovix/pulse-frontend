@@ -23,9 +23,18 @@ import {
 } from "react-icons/si";
 import { FaEdge, FaInternetExplorer, FaWindows } from "react-icons/fa";
 
-export function getFaviconUrl(referrerUrl: string, size = 64) {
-  const domain = new URL(referrerUrl).hostname;
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+export function getFaviconUrl(referrerOrDomain: string): string | null {
+  let domain: string;
+  try {
+    domain = new URL(referrerOrDomain).hostname;
+  } catch {
+    domain = referrerOrDomain.trim();
+  }
+
+  // Display names like "ChatGPT" have no dot, so there is no domain to look up
+  if (!domain.includes(".")) return null;
+
+  return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/favicon?domain=${encodeURIComponent(domain)}`;
 }
 
 export function normalizeBrowserKey(raw: string): string {
@@ -36,7 +45,10 @@ export function normalizeBrowserKey(raw: string): string {
   return raw.replace(/ mobile$/i, "");
 }
 
-export const browserIcons: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+export const browserIcons: Record<
+  string,
+  React.ComponentType<{ size?: number; color?: string }>
+> = {
   Chrome: SiGooglechrome,
   Firefox: SiFirefoxbrowser,
   Safari: SiSafari,
@@ -89,7 +101,10 @@ export function normalizeDeviceBrandKey(raw: string): string {
   return trimmed;
 }
 
-export const deviceBrandIcons: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+export const deviceBrandIcons: Record<
+  string,
+  React.ComponentType<{ size?: number; color?: string }>
+> = {
   Apple: SiApple,
   Google: SiGoogle,
   Samsung: SiSamsung,

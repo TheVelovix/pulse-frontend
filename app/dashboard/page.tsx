@@ -95,13 +95,10 @@ export default function Dashboard() {
       toast.error("Failed to update visibility.");
       return;
     }
-    const data: { isPublic: boolean; publicSlug: string | null } =
-      await res.json();
+    const data: { isPublic: boolean; publicSlug: string | null } = await res.json();
     setProjects(prev =>
       prev.map(p =>
-        p.id === id
-          ? { ...p, isPublic: data.isPublic, publicSlug: data.publicSlug }
-          : p,
+        p.id === id ? { ...p, isPublic: data.isPublic, publicSlug: data.publicSlug } : p,
       ),
     );
     if (data.isPublic && data.publicSlug) {
@@ -112,7 +109,7 @@ export default function Dashboard() {
       toast.success("Project is now private.");
     }
   }
-
+  console.log(user);
   async function handleCreate(e: React.SubmitEvent) {
     e.preventDefault();
     const res = await fetchWithAuth("/api/projects", {
@@ -138,12 +135,9 @@ export default function Dashboard() {
       </Suspense>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        {user?.subscriptionPlan === SubscriptionPlan.FREE && (
-          <p>{projects.length}/5 projects</p>
-        )}
+        {user?.subscriptionPlan === SubscriptionPlan.FREE && <p>{projects.length}/5 projects</p>}
         {user?.subscriptionPlan === SubscriptionPlan.PRO ||
-        (user?.subscriptionPlan === SubscriptionPlan.FREE &&
-          projects.length < 5) ? (
+        (user?.subscriptionPlan === SubscriptionPlan.FREE && projects.length < 5) ? (
           <button
             onClick={openForm}
             className="text-sm font-medium bg-accent hover:bg-accent-hover transition-colors duration-200 px-4 py-2 rounded-md cursor-pointer"

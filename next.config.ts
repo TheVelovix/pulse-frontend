@@ -16,6 +16,17 @@ const nextConfig: NextConfig = {
         hostname: "www.google.com",
         pathname: "/s2/favicons/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5119",
+        pathname: "/api/favicon",
+      },
+      {
+        protocol: "https",
+        hostname: "api.pulse.velovix.com",
+        pathname: "/api/favicon",
+      },
     ],
   },
 };

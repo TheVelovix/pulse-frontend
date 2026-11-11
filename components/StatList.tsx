@@ -1,5 +1,6 @@
 import { flag, name } from "country-emoji";
 import Favicon from "./Favicon";
+import { AI_DOMAINS } from "@/lib/aiSources";
 
 export default function StatList({
   title,
@@ -28,7 +29,13 @@ export default function StatList({
                     `${flag(item.label)} ${name(item.label)}`
                   ) : title === "Top Referrers" || title === "AI Referrers" ? (
                     <div className="flex gap-2">
-                      <Favicon url={item.label} />
+                      <Favicon
+                        url={
+                          title === "AI Referrers"
+                            ? (AI_DOMAINS[item.label] ?? item.label)
+                            : item.label
+                        }
+                      />
                       {item.label}
                     </div>
                   ) : (
